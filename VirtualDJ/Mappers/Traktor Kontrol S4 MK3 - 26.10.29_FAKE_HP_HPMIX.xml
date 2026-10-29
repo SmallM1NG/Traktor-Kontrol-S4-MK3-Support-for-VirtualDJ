@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Created by DJM1NG
+Version: v0.1.0
+https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ
+-->
+<mapper device="TRAKTORS4MK3" author="DJM1NG" version="850" date="2026-10-29">
+  <info>https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ</info>
+  <map value="CROSSFADER" action="set 's4mk3_crossfader' &amp; crossfader" />
+  <map value="VOLUME" action="param_add -0.002 &amp; volume &amp; set 's4mk3_volume'" />
+  <map value="GAIN" action="set 's4mk3_gain' &amp; gain" />
+  <map value="EQ_LOW" action="set 's4mk3_eq_low' &amp; eq_low" />
+  <map value="EQ_MID" action="set 's4mk3_eq_mid' &amp; eq_mid" />
+  <map value="EQ_HIGH" action="set 's4mk3_eq_high' &amp; eq_high" />
+  <map value="FILTER" action="set 's4mk3_filter' &amp; filter" />
+  <map value="FX_PRM2" action="set 's4mk3_fx_prm2' &amp; (effect_3slots_layout ? effect_slider 2 1 : effect_slider 2)" />
+  <map value="FX_PRM3" action="set 's4mk3_fx_prm3' &amp; (effect_3slots_layout ? effect_slider 3 1 : effect_slider 3)" />
+  <map value="FX_PRM1" action="set 's4mk3_fx_prm1' &amp; (effect_3slots_layout ? effect_slider 1 1 : effect_slider 1)" />
+  <map value="FX_PRM4" action="set 's4mk3_fx_prm4' &amp; (leftdeck ? var '$s4mk3_startup_speed_on' 1 ? set_var '$s4mk3_startup_speed' &amp; deck all startupspeed : nothing : rightdeck ? var '$s4mk3_brake_speed_on' 1 ? set_var '$s4mk3_brake_speed' &amp; deck all brakespeed : nothing)" />
+  <map value="BOOTH_VOL" action="set 's4mk3_booth_vol' &amp; nothing" />
+  <map value="FX_ON_1" action="effect_3slots_layout ? effect_active 1 : effect_button 1" />
+  <map value="FX_ON_2" action="effect_3slots_layout ? effect_active 2 : effect_button 2" />
+  <map value="FX_ON_3" action="effect_3slots_layout ? effect_active 3 : effect_button 3" />
+  <map value="FX_ON_4" action="effect_3slots_layout ? nothing : effect_active 1" />
+  <!-- <map value="FX_SEL_PUSH" action="effect_3slots_layout" /> -->
+  <map value="HOTCUE_MODE" action="pad_page 1" />
+  <map value="PFL" action="pfl" />
+  <map value="PAD2" action="pad 2" />
+  <map value="PAD3" action="pad 3" />
+  <map value="PAD4" action="pad 4" />
+  <map value="PAD5" action="pad 5" />
+  <map value="PAD6" action="pad 6" />
+  <map value="PAD7" action="pad 7" />
+  <map value="PAD8" action="pad 8" />
+  <map value="SHIFT" action="shift" />
+  <map value="SAMPLES_MODE" action="pad_page 2 ? pad_page 3 : pad_page 2" />
+  <map value="STEMS_MODE" action="pad_page 4" />
+  <map value="LOOP_ENC" action="loop_select" />
+  <map value="LOOP_ENC_PUSH" action="loop" />
+  <!-- <map value="LED_FOLDERS" action="on" /> -->
+  <map value="LED_GRID" action="var 's4mk3_cbg_adjust' ? blink ?  (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim') : var 's4mk3_cbg_slide' ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')" />
+  <map value="LED_REVERSE" action="reverse" />
+  <map value="LED_HOTCUES_MODE" action="pad_page 1 ? (get_var '@s4mk3_deck_color') : pad_page 5 ? (blink 500ms ? (get_var '@s4mk3_deck_color')) : color 'white'" />
+  <map value="LED_COLORFX_SEL_3" action="deck all filter_activate 'flanger' ? (blink 500ms ? color 'white') : color 'white'" />
+  <map value="LED_COLORFX_SEL_FILTER" action="var '@$s4mk3_mixerfx_on' 1 ? var '@$s4mk3_mixerfx_mode' 1 ? blink 1bt ? color 'white' : nothing : color 'white' : nothing" />
+  <map value="LED_DECKA" action="deck 1 leftdeck ? deck 1 get_var '@s4mk3_deck_color' : off" />
+  <map value="LED_DECKB" action="deck 2 rightdeck ? deck 2 get_var '@s4mk3_deck_color' : off" />
+  <map value="LED_COLORFX_ON" action="var '@$s4mk3_mixerfx_on' 1 ? var '@$s4mk3_mixerfx_mode' 0 ? (effect_active while_pressed ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')) : param_smaller get_beat 50% ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim') : nothing" />
+  <map value="LED_PLAY" action="pioneer_play" />
+  <map value="LED_MASTER" action="shift ? (masterdeck_auto ? blink 300ms ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim') ) : masterdeck ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')" />
+  <map value="LED_SYNC" action="shift ? (auto_pitch_lock ? blink 300ms ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')) : pitch_reset ? (blink 300ms ? (get_var '@s4mk3_deck_color')) : play ? is_sync ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim') : (get_var '@s4mk3_deck_color_dim')" />
+  <map value="LED_VINYL" action="vinyl_mode? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')" />
+  <map value="LED_CUE" action="pioneer_cue ? color 'orange' : color 'darkorange'" />
+  <map value="GRID" action="holding ? set_firstbeat : toggle 's4mk3_cbg_slide' &amp; set 's4mk3_cbg_adjust' 0" />
+  <map value="FLEX" action="slip_mode" />
+  <map value="REVERSE" action="slip_mode ? dump while_pressed : reverse" />
+  <map value="DECKA" action="deck 1 leftdeck" />
+  <map value="DECKC" action="deck 3 leftdeck" />
+  <map value="DECKB" action="deck 2 rightdeck" />
+  <map value="DECKD" action="deck 4 rightdeck" />
+  <map value="COLORFX_ON" action="var '@$s4mk3_mixerfx_on' 1 ? effect_active while_pressed : nothing" />
+  <map value="COLORFX_SEL_1" action="deck all filter_activate 'filter'" />
+  <map value="LED_COLORFX_SEL_1" action="deck all filter_activate 'filter' ? (blink 500ms ? color 'white') : color 'white'" />
+  <map value="LED_COLORFX_SEL_2" action="deck all filter_activate 'echo' ? (blink 500ms ? color 'white') : color 'white'" />
+  <map value="COLORFX_SEL_2" action="deck all filter_activate 'echo'" />
+  <map value="MOVE_ENC_PUSH" action="loop_button" />
+  <map value="SHIFT_MOVE_ENC" action="pad_param" />
+  <map value="SHIFT_LOOP_ENC" action="pad_param2" />
+  <map value="SHIFT_MOVE_ENC_PUSH" action="nothing" />
+  <map value="SHIFT_LOOP_ENC_PUSH" action="nothing" />
+  <map value="LED_DECKD" action="deck 4 rightdeck ? deck 4 get_var '@s4mk3_deck_color' : off" />
+  <map value="LED_DECKC" action="deck 3 leftdeck ? deck 3 get_var '@s4mk3_deck_color' : off" />
+  <map value="LED_PAD2" action="pad_button_color 2" />
+  <map value="LED_PAD3" action="pad_button_color 3" />
+  <map value="LED_PAD4" action="pad_button_color 4" />
+  <map value="LED_PAD5" action="pad_button_color 5" />
+  <map value="LED_PAD6" action="pad_button_color 6" />
+  <map value="LED_PAD7" action="pad_button_color 7" />
+  <map value="LED_PAD8" action="pad_button_color 8" />
+  <map value="COLORFX_SEL_3" action="deck all filter_activate 'flanger'" />
+  <map value="COLORFX_SEL_4" action="deck all filter_activate 'reverb'" />
+  <map value="LED_COLORFX_SEL_4" action="deck all filter_activate 'reverb' ? (blink 500ms ? color 'white') : color 'white'" />
+  <map value="LED_STEMS_MODE" action="pad_page 4 ? (get_var '@s4mk3_deck_color') : pad_page 8 ? (blink 500ms ? (get_var '@s4mk3_deck_color')) : color 'white'" />
+  <map value="SAMPLER_REC" action="loop ? loop_adjust 'in' : pioneer_loop_in" />
+  <map value="SAMPLER_MUTE" action="loop ? loop_adjust 'out' : pioneer_loop_out" />
+  <map value="VINYL" action="vinyl_mode" />
+  <!-- <map value="HAPTIC" action="vinyl_mode" /> -->
+  <map value="LED_VUMETER_01" action="param_bigger 1% get_level ? on : off" />
+  <map value="LED_VUMETER_02" action="param_bigger 6% get_level ? on : off" />
+  <map value="LED_VUMETER_03" action="param_bigger 13% get_level ? on : off" />
+  <map value="LED_VUMETER_04" action="param_bigger 20% get_level ? on : off" />
+  <map value="LED_VUMETER_05" action="param_bigger 26% get_level ? on : off" />
+  <map value="LED_VUMETER_06" action="param_bigger 32% get_level ? on : off" />
+  <map value="LED_VUMETER_07" action="param_bigger 40% get_level ? on : off" />
+  <map value="LED_VUMETER_08" action="param_bigger 47% get_level ? on : off" />
+  <map value="LED_VUMETER_09" action="param_bigger 53% get_level ? on : off" />
+  <map value="LED_VUMETER_10" action="param_bigger 60% get_level ? on : off" />
+  <map value="LED_VUMETER_11" action="param_bigger 66% get_level ? on : off" />
+  <map value="LED_VUMETER_12" action="param_bigger 73% get_level ? on : off" />
+  <map value="LED_VUMETER_13" action="param_bigger 80% get_level ? on : off" />
+  <map value="LED_VUMETER_14" action="param_bigger 87% get_level ? on : off" />
+  <map value="LED_VUMETER_15" action="param_bigger 94% get_level ? on : off" />
+  <!-- <map value="LED_ROT" action="get_rotation" /> -->
+  <!-- <map value="LED_JOGRING_COLOR" action="get_deck_color 'absolute'" /> -->
+  <!-- <map value="LED_JOGRING_BLINK" action="linein ? off : is_audible ? songpos_remain 30000ms ? on : off" /> -->
+  <map value="EXT" action="linein" />
+  <map value="CF_ASSIGN_LEFT" action="cross_assign 'left'" />
+  <map value="CF_ASSIGN_RIGHT" action="cross_assign 'right'" />
+  <!-- <map value="CF_ASSIGN" action="param_bigger 50% ? cross_assign 'left' : param_equal 0% ? cross_assign 'right' : cross_assign 'thru'" /> -->
+  <map value="SHIFT_FX_PRM1" action="set 's4mk3_fx_prm1' &amp; (effect_3slots_layout ? effect_slider 1 2 : effect_slider 4)" />
+  <map value="SHIFT_FX_PRM2" action="set 's4mk3_fx_prm2' &amp; (effect_3slots_layout ? effect_slider 2 2 : effect_slider 5)" />
+  <map value="SHIFT_FX_PRM3" action="set 's4mk3_fx_prm3' &amp; (effect_3slots_layout ? effect_slider 3 2 : effect_slider 6)" />
+  <map value="SHIFT_FX_ON_1" action="effect_3slots_layout ? effect_select +1 : effect_button 4" />
+  <map value="SHIFT_FX_ON_2" action="effect_3slots_layout ? effect_select 2 +1 : effect_button 5" />
+  <map value="SHIFT_FX_ON_3" action="effect_3slots_layout ? effect_select 3 +1 : effect_button 6" />
+  <map value="BROWSER_BACK" action="sandbox" />
+  <map value="BROWSER_PUSH" action="var '@s4mk3_browser_enc_mode' 0 ? holding ? browser_zoom : browser_window 'folders,songs,sideview' : effect_3slots_layout ? nothing : effect_active 1" />
+  <map value="BROWSER_STAR" action="quantize_loop &amp; quantize_setcue" />
+  <map value="SHIFT_MASTER" action="masterdeck_auto" />
+  <map value="CF_ASSIGN_THRU" action="cross_assign 'thru'" />
+  <map value="CF_CURVE1" action="crossfader_curve 'smooth'" />
+  <map value="CF_CURVE2" action="crossfader_curve 'full'" />
+  <map value="CF_CURVE3" action="crossfader_curve 'scratch'" />
+  <map value="SHIFT_STEMS_MODE" action="pad_page 8" />
+  <map value="SHIFT_HOTCUE_MODE" action="pad_page 5" />
+  <map value="FX_ASSIGN1" action="setting 'eqmode' 'frequency'" />
+  <map value="FX_ASSIGN2" action="setting 'eqmode' 'Ezremix'" />
+  <map value="SHIFT_FX_ASSIGN2" action="rightvideo 'auto'" />
+  <map value="SHIFT_FX_ASSIGN1" action="leftvideo 'auto'" />
+  <map value="LED_FX_ASSIGN2" action="setting 'eqmode' 'ezremix'" />
+  <map value="SHIFT_EXT" action="nothing" />
+  <map value="LED_TT" action="var '@s4mk3_tt_mode' ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')" />
+  <map value="JOG_TOUCH" action="set 's4mk3_tt_touch' 1 while_pressed &amp; (var 's4mk3_cbg_slide' ? nothing : var 's4mk3_cbg_adjust' ? nothing : touchwheel_touch)" />
+  <map value="JOG" action="var '@s4mk3_tt_mode' ? (var 's4mk3_tt_touch' ? touchwheel : (touchwheel_touch ? touchwheel : nothing)) : (var 's4mk3_cbg_adjust' ? set_bpm : var 's4mk3_cbg_slide' ? adjust_cbg : touchwheel)" />
+  <!-- <map value="LED_JOGRING_POSITION" action="get_rotation" /> -->
+  <map value="TT" action="hold off &amp; touchwheel_touch off &amp; set 's4mk3_tt_touch' 0 &amp; toggle '@s4mk3_tt_mode'" />
+  <!-- <map value="LED_JOGRING_ON" action="load_pulse" /> -->
+  <map value="LED_FX_ASSIGN1" action="setting 'eqmode' 'frequency' " />
+  <map value="SHIFT_GRID" action="holding ? reanalyze : toggle 's4mk3_cbg_adjust' &amp; set 's4mk3_cbg_slide' 0" />
+  <map value="SHIFT_BROWSER_STAR" action="playlist_add" />
+  <map value="SHIFT_BROWSER_VIEW" action="unload" />
+  <map value="SHIFT_BROWSER_ENC" action="var '@s4mk3_browser_enc_mode' 0 ? param_bigger 0 ? zoom +1% &amp; zoom_vertical +1% : zoom -1% &amp; zoom_vertical -1% : param_bigger 0 ? effect_list 1 + 1 : nothing" />
+  <map value="ONINIT" action="set '$s4mk3_startup_speed_on' 0 &amp; set '$s4mk3_brake_speed_on' 0 &amp; set '$s4mk3_startup_speed' 0 &amp; set '$s4mk3_brake_speed' 0 &amp; fake_hp on &amp; fake_hpmix on &amp; deck 1 set 's4mk3_tt_touch' 0 &amp; deck 2 set 's4mk3_tt_touch' 0 &amp; deck 3 set 's4mk3_tt_touch' 0 &amp; deck 4 set 's4mk3_tt_touch' 0 &amp; deck 1 hold off &amp; deck 1 touchwheel_touch off &amp; deck 2 hold off &amp; deck 2 touchwheel_touch off &amp; deck 3 hold off &amp; deck 3 touchwheel_touch off &amp; deck 4 hold off &amp; deck 4 touchwheel_touch off &amp; deck 1 set 's4mk3_cue_preview' 0 &amp; deck 2 set 's4mk3_cue_preview' 0 &amp; deck 3 set 's4mk3_cue_preview' 0 &amp; deck 4 set 's4mk3_cue_preview' 0 &amp; (param_equal `deck 1 get_var '@s4mk3_deck_color' &amp; param_cast text` '0' ? (deck 1 set_var '@s4mk3_deck_color' 'blue' &amp; deck 1 set_var '@s4mk3_deck_color_dim' 'darkblue') : nothing) &amp; (param_equal `deck 2 get_var '@s4mk3_deck_color' &amp; param_cast text` '0' ? (deck 2 set_var '@s4mk3_deck_color' 'red' &amp; deck 2 set_var '@s4mk3_deck_color_dim' 'darkred') : nothing) &amp; (param_equal `deck 3 get_var '@s4mk3_deck_color' &amp; param_cast text` '0' ? (deck 3 set_var '@s4mk3_deck_color' 'green' &amp; deck 3 set_var '@s4mk3_deck_color_dim' 'darkgreen') : nothing) &amp; (param_equal `deck 4 get_var '@s4mk3_deck_color' &amp; param_cast text` '0' ? (deck 4 set_var '@s4mk3_deck_color' 'orange' &amp; deck 4 set_var '@s4mk3_deck_color_dim' 'darkorange') : nothing)" />
+  <map value="BROWSER_LIST" action="var '@s4mk3_browser_enc_mode' 0 ? set '@s4mk3_browser_enc_mode' 1 : set '@s4mk3_browser_enc_mode' 0" />
+  <map value="LED_BROWSER_LIST" action="var '@s4mk3_browser_enc_mode' 0 ? (get_var '@s4mk3_deck_color') : blink 500ms ? (get_var '@s4mk3_deck_color')  " />
+  <map value="BROWSER_ENC" action="(var '@s4mk3_browser_enc_mode' 0 ? (var '@s4mk3_screen_auto' ? (((var_equal '@s4mk3_screen_page' 7 ? true : var_equal '@s4mk3_screen_page' 8 ? true : var_equal '@s4mk3_screen_page' 9 ? true : false) ? (set '@s4mk3_screen_last_browser' `get_var '@s4mk3_screen_page'`) : (var_equal '@s4mk3_screen_page' 0 ? set '@s4mk3_screen_last_other' 1 : set '@s4mk3_screen_last_other' `get_var '@s4mk3_screen_page'`)) &amp; ((var_equal '@s4mk3_screen_page' 7 ? true : var_equal '@s4mk3_screen_page' 8 ? true : var_equal '@s4mk3_screen_page' 9 ? true : false) ? (nothing) : (var_equal '@s4mk3_screen_last_browser' 0 ? set '@s4mk3_screen_page' 7 : set '@s4mk3_screen_page' `get_var '@s4mk3_screen_last_browser'`))) : nothing) : nothing) &amp; (var '@s4mk3_browser_enc_mode' 0 ? browser_scroll : effect_3slots_layout ? (param_smaller 0 ? effect_beats_all -1 : effect_beats_all +1) :  (param_smaller 0 ? effect_select 1 -1 : effect_select 1 +1))" />
+  <map value="SHIFT_BROWSER_LIST" action="var '@s4mk3_browser_enc_mode' 0 ? show_splitpanel 'sideview' : effect_show_gui" />
+  <map value="SHIFT_BROWSER_PUSH" action="var '@s4mk3_browser_enc_mode' 0 ? browser_window 'sideview,songs,folders' : effect_3slots_layout on ? effect_3slots_layout off : effect_3slots_layout on" />
+  <map value="BROWSER_VIEW" action="(doubleclick ? clone_from_deck : load) &amp; (var '@s4mk3_screen_auto' ? ((var_equal '@s4mk3_screen_page' 7 ? true : var_equal '@s4mk3_screen_page' 8 ? true : var_equal '@s4mk3_screen_page' 9 ? true : false) ? (var_equal '@s4mk3_screen_last_other' 0 ? set '@s4mk3_screen_page' 1 : set '@s4mk3_screen_page' `get_var '@s4mk3_screen_last_other'`) : (nothing)) : nothing)" />
+  <map value="LED_BROWSER_VIEW" action="loaded ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')" />
+  <map value="LED_BROWSER_BACK" action="sandbox ? blink 500ms ? (get_var '@s4mk3_deck_color') : nothing : (get_var '@s4mk3_deck_color')" />
+  <map value="SHIFT_FX_ON_4" action="leftdeck ? var '$s4mk3_startup_speed_on' 0 ? set '$s4mk3_startup_speed_on' 1 : set '$s4mk3_startup_speed_on' 0 &amp; deck all startupspeed 0 : rightdeck ? var '$s4mk3_brake_speed_on' 0 ? set  '$s4mk3_brake_speed_on' 1 : set  '$s4mk3_brake_speed_on' 0 &amp; deck all brakespeed 0" />
+  <map value="LED_FX_ON_4" action="shift ? (leftdeck ? var '$s4mk3_startup_speed_on' 0 ? false : blink 300ms  : rightdeck ? var '$s4mk3_brake_speed_on' 0 ? false : blink 300ms) : effect_3slots_layout ? nothing : effect_active 1 " />
+  <map value="LED_BROWSER_STAR" action="(quantize_loop &amp; quantize_setcue) ? (get_var '@s4mk3_deck_color')" />
+  <!-- <map value="LED_LIST" action="on" /> -->
+  <map value="LED_FLUX" action="get_slip_active ? blink 500ms : slip_mode" />
+  <map value="SHIFT_JOG_TOUCH" action="set 's4mk3_tt_touch' 1 while_pressed &amp; touchwheel_touch 'search'" />
+  <map value="SHIFT_JOG" action="var '@s4mk3_tt_mode' ? (var 's4mk3_tt_touch' ? touchwheel 'search' : nothing) : touchwheel 'search'" />
+  <map value="MOVE_ENC" action="beatjump" />
+  <map value="PAD1" action="pad 1" />
+  <map value="LED_PAD1" action="pad_button_color 1" />
+  <map value="LED_SAMPLES_MODE" action="pad_page 2 ? blink 1000ms : pad_page 3 ? blink 750ms : pad_page 6 ? blink 500ms : pad_page 7 ? blink 300ms : true" />
+  <map value="SHIFT_SAMPLES_MODE" action="pad_page 6 ? pad_page 7 : pad_page 6" />
+  <map value="LED_SAMPLER_MUTE" action="loop_adjust 'out' ? blink 300ms : pioneer_loop_out" />
+  <map value="LED_SAMPLER_REC" action="loop_adjust 'in' ? blink 300ms : pioneer_loop_in" />
+  <map value="SHIFT_SAMPLER_REC" action="pitch_range -1" />
+  <map value="SHIFT_SAMPLER_MUTE" action="pitch_range +1" />
+  <map value="MASTER" action="doubleclick ? masterdeck : pitch_zero" />
+  <map value="SYNC" action="sync" />
+  <map value="SHIFT_SYNC" action="auto_pitch_lock" />
+  <map value="CUE" action="set 's4mk3_cue_preview' while_pressed &amp; pioneer_cue" />
+  <map value="PLAY" action="set 's4mk3_cue_preview' 0 &amp; pioneer_play" />
+  <map value="SHIFT_CUE" action="goto_start" />
+  <map value="SHIFT_PLAY" action="play_stutter" />
+  <map value="LED_PITCHZERO" action="get_pitch_zero ? (get_var '@s4mk3_deck_color') : blink ? (get_var '@s4mk3_deck_color')" />
+  <map value="COLORFX_SEL_FILTER" action="holding ? (var '@$s4mk3_mixerfx_on' 1 ? var '@$s4mk3_mixerfx_mode' 0 ? set '@$s4mk3_mixerfx_mode' 1 : set '@$s4mk3_mixerfx_mode' 0) : var '@$s4mk3_mixerfx_on' 0 ? set '@$s4mk3_mixerfx_on' 1 : set '@$s4mk3_mixerfx_on' 0" />
+  <map value="QUANTIZE" action="deck all quantize_all &amp; deck all smart_play" />
+  <map value="LED_QUANTIZE" action="deck all quantize_all" />
+  <map value="MASTER_VOL" action="set 's4mk3_master_vol' &amp; nothing" />
+  <map value="ONEXIT" action="fake_hp off &amp; fake_hpmix off &amp; deck 1 set 's4mk3_tt_touch' 0 &amp; deck 2 set 's4mk3_tt_touch' 0 &amp; deck 3 set 's4mk3_tt_touch' 0 &amp; deck 4 set 's4mk3_tt_touch' 0 &amp; deck 1 hold off &amp; deck 1 touchwheel_touch off &amp; deck 2 hold off &amp; deck 2 touchwheel_touch off &amp; deck 3 hold off &amp; deck 3 touchwheel_touch off &amp; deck 4 hold off &amp; deck 4 touchwheel_touch off" />
+  <map value="PITCH" action="set 's4mk3_pitch' &amp; pitch" />
+  <map value="SHIFT_DECKA" action="((deck left var_equal '@s4mk3_screen_page' 7 ? true : deck left var_equal '@s4mk3_screen_page' 8 ? true : deck left var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck left set '@s4mk3_screen_last_browser' `deck left get_var '@s4mk3_screen_page'`) : (deck left var_equal '@s4mk3_screen_page' 0 ? deck left set '@s4mk3_screen_last_other' 1 : deck left set '@s4mk3_screen_last_other' `deck left get_var '@s4mk3_screen_page'`)) &amp; (deck left var_equal '@s4mk3_screen_page' 1 ? deck left set '@s4mk3_screen_page' 12 : deck left var_equal '@s4mk3_screen_page' 0 ? deck left set '@s4mk3_screen_page' 12 : deck left set '@s4mk3_screen_page' `deck left get_var '@s4mk3_screen_page' &amp; param_add -1`) &amp; ((deck left var_equal '@s4mk3_screen_page' 7 ? true : deck left var_equal '@s4mk3_screen_page' 8 ? true : deck left var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck left set '@s4mk3_screen_last_browser' `deck left get_var '@s4mk3_screen_page'`) : (deck left var_equal '@s4mk3_screen_page' 0 ? deck left set '@s4mk3_screen_last_other' 1 : deck left set '@s4mk3_screen_last_other' `deck left get_var '@s4mk3_screen_page'`))" />
+  <map value="SHIFT_DECKC" action="((deck left var_equal '@s4mk3_screen_page' 7 ? true : deck left var_equal '@s4mk3_screen_page' 8 ? true : deck left var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck left set '@s4mk3_screen_last_browser' `deck left get_var '@s4mk3_screen_page'`) : (deck left var_equal '@s4mk3_screen_page' 0 ? deck left set '@s4mk3_screen_last_other' 1 : deck left set '@s4mk3_screen_last_other' `deck left get_var '@s4mk3_screen_page'`)) &amp; (deck left var_equal '@s4mk3_screen_page' 12 ? deck left set '@s4mk3_screen_page' 1 : deck left var_equal '@s4mk3_screen_page' 0 ? deck left set '@s4mk3_screen_page' 2 : deck left set '@s4mk3_screen_page' `deck left get_var '@s4mk3_screen_page' &amp; param_add 1`) &amp; ((deck left var_equal '@s4mk3_screen_page' 7 ? true : deck left var_equal '@s4mk3_screen_page' 8 ? true : deck left var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck left set '@s4mk3_screen_last_browser' `deck left get_var '@s4mk3_screen_page'`) : (deck left var_equal '@s4mk3_screen_page' 0 ? deck left set '@s4mk3_screen_last_other' 1 : deck left set '@s4mk3_screen_last_other' `deck left get_var '@s4mk3_screen_page'`))" />
+  <map value="SHIFT_DECKB" action="((deck right var_equal '@s4mk3_screen_page' 7 ? true : deck right var_equal '@s4mk3_screen_page' 8 ? true : deck right var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck right set '@s4mk3_screen_last_browser' `deck right get_var '@s4mk3_screen_page'`) : (deck right var_equal '@s4mk3_screen_page' 0 ? deck right set '@s4mk3_screen_last_other' 1 : deck right set '@s4mk3_screen_last_other' `deck right get_var '@s4mk3_screen_page'`)) &amp; (deck right var_equal '@s4mk3_screen_page' 1 ? deck right set '@s4mk3_screen_page' 12 : deck right var_equal '@s4mk3_screen_page' 0 ? deck right set '@s4mk3_screen_page' 12 : deck right set '@s4mk3_screen_page' `deck right get_var '@s4mk3_screen_page' &amp; param_add -1`) &amp; ((deck right var_equal '@s4mk3_screen_page' 7 ? true : deck right var_equal '@s4mk3_screen_page' 8 ? true : deck right var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck right set '@s4mk3_screen_last_browser' `deck right get_var '@s4mk3_screen_page'`) : (deck right var_equal '@s4mk3_screen_page' 0 ? deck right set '@s4mk3_screen_last_other' 1 : deck right set '@s4mk3_screen_last_other' `deck right get_var '@s4mk3_screen_page'`))" />
+  <map value="SHIFT_DECKD" action="((deck right var_equal '@s4mk3_screen_page' 7 ? true : deck right var_equal '@s4mk3_screen_page' 8 ? true : deck right var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck right set '@s4mk3_screen_last_browser' `deck right get_var '@s4mk3_screen_page'`) : (deck right var_equal '@s4mk3_screen_page' 0 ? deck right set '@s4mk3_screen_last_other' 1 : deck right set '@s4mk3_screen_last_other' `deck right get_var '@s4mk3_screen_page'`)) &amp; (deck right var_equal '@s4mk3_screen_page' 12 ? deck right set '@s4mk3_screen_page' 1 : deck right var_equal '@s4mk3_screen_page' 0 ? deck right set '@s4mk3_screen_page' 2 : deck right set '@s4mk3_screen_page' `deck right get_var '@s4mk3_screen_page' &amp; param_add 1`) &amp; ((deck right var_equal '@s4mk3_screen_page' 7 ? true : deck right var_equal '@s4mk3_screen_page' 8 ? true : deck right var_equal '@s4mk3_screen_page' 9 ? true : false) ? (deck right set '@s4mk3_screen_last_browser' `deck right get_var '@s4mk3_screen_page'`) : (deck right var_equal '@s4mk3_screen_page' 0 ? deck right set '@s4mk3_screen_last_other' 1 : deck right set '@s4mk3_screen_last_other' `deck right get_var '@s4mk3_screen_page'`))" />
+  <map value="HEADPHONE_MIX" action="set 's4mk3_headphone_mix' &amp; nothing" />
+  <map value="HEADPHONE_VOL" action="set 's4mk3_headphone_vol' &amp; nothing" />
+</mapper>
