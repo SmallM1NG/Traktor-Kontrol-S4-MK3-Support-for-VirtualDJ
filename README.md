@@ -16,7 +16,7 @@
 
 <p align="center"><a href="#project-introduction">Project Introduction</a> · <a href="#feature-showcase">Feature Showcase</a> · <a href="#how-to-install">How to Install</a> · <a href="#how-to-use">How to Use</a> · <a href="#additional-information">Additional Information</a></p>
 
-<p align="center"><a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a></p>
+<p align="center"><a href="Docs/md/CHANGELOG.md">Changelog</a> · <a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a></p>
 
 ---
 
