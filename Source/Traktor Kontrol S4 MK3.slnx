@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="NI Service Helper.vcxproj" />
+  <Project Path="Bridge.vcxproj" />
+</Solution>

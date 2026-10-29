@@ -1,0 +1,10 @@
+{
+  "TT": "hold off & touchwheel_touch off & set 's4mk3_tt_touch' 0 & toggle '@s4mk3_tt_mode'",
+  "JOG": "var '@s4mk3_tt_mode' ? (var 's4mk3_tt_touch' ? touchwheel : (touchwheel_touch ? touchwheel : nothing)) : (var 's4mk3_cbg_adjust' ? set_bpm : var 's4mk3_cbg_slide' ? adjust_cbg : touchwheel)",
+  "JOG_TOUCH": "set 's4mk3_tt_touch' 1 while_pressed & (var 's4mk3_cbg_slide' ? nothing : var 's4mk3_cbg_adjust' ? nothing : touchwheel_touch)",
+  "SHIFT_JOG": "var '@s4mk3_tt_mode' ? (var 's4mk3_tt_touch' ? touchwheel 'search' : nothing) : touchwheel 'search'",
+  "SHIFT_JOG_TOUCH": "set 's4mk3_tt_touch' 1 while_pressed & touchwheel_touch 'search'",
+  "LED_TT": "var '@s4mk3_tt_mode' ? (get_var '@s4mk3_deck_color') : (get_var '@s4mk3_deck_color_dim')",
+  "LED_JOGRING_BLINK": "linein ? off : play ? songpos_remain 30000ms ? hold off ? on : off",
+  "SHIFT": "shift"
+}

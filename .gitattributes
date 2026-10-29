@@ -1,0 +1,2 @@
+# Keep device and skin resources byte-identical to the installed packages.
+VirtualDJ/** -text

@@ -1,0 +1,47 @@
+# Local compiler output and diagnostics
+**/artifacts/
+**/__pycache__/
+*.py[cod]
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+*.exe
+*.log
+*.log.*
+.vs/
+.vscode/
+# Local evidence and private development state
+research/
+releases/legacy/
+CURRENT-installation.json
+settings.xml
+*.etl
+*.dmp
+
+# Visual Studio user settings and IntelliSense caches
+*.vcxproj.user
+*.slnx.user
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.db-shm
+*.VC.db-wal
+*.VC.opendb
+ipch/
+
+# MSBuild intermediate files outside artifacts/
+/Source/obj/
+/Source/x64/
+/Source/Debug/
+/Source/Release/
+*.idb
+*.iobj
+*.ipdb
+*.tlog
+*.lastbuildstate
+*.recipe
+*.FileListAbsolute.txt

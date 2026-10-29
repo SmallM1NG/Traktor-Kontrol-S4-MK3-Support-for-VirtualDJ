@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+ <ItemGroup Label="ProjectConfigurations"><ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration><ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration></ItemGroup>
+ <PropertyGroup Label="Globals"><ProjectGuid>{537A9024-4390-428D-B344-26392365A8F8}</ProjectGuid><Keyword>Win32Proj</Keyword><VcpkgEnabled>false</VcpkgEnabled><RootNamespace>S4MK3</RootNamespace><WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion></PropertyGroup>
+ <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
+ <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration"><ConfigurationType>Application</ConfigurationType><UseDebugLibraries>true</UseDebugLibraries><PlatformToolset Condition="'$(PlatformToolset)'=='' and '$(VisualStudioVersion)' &gt;= '18.0'">v145</PlatformToolset><PlatformToolset Condition="'$(PlatformToolset)'==''">v143</PlatformToolset><CharacterSet>Unicode</CharacterSet></PropertyGroup><PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration"><ConfigurationType>Application</ConfigurationType><UseDebugLibraries>false</UseDebugLibraries><PlatformToolset Condition="'$(PlatformToolset)'=='' and '$(VisualStudioVersion)' &gt;= '18.0'">v145</PlatformToolset><PlatformToolset Condition="'$(PlatformToolset)'==''">v143</PlatformToolset><CharacterSet>Unicode</CharacterSet></PropertyGroup>
+ <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
+  <PropertyGroup>
+    <S4Version Condition="'$(S4Version)' == ''">v0.1.0</S4Version>
+    <OutDir>$(MSBuildThisFileDirectory)artifacts\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(OutDir)obj\$(MSBuildProjectName)\</IntDir>
+    <GeneratedDir>$(IntDir)generated\</GeneratedDir>
+    <HelperBinaryPath>$(OutDir)Traktor Kontrol S4 MK3 NI Service Helper $(S4Version).exe</HelperBinaryPath>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <LinkIncremental Condition="'$(Configuration)' == 'Release'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)' == 'Debug'">true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(GeneratedDir);$(MSBuildThisFileDirectory)include;$(MSBuildThisFileDirectory)vendor;$(MSBuildThisFileDirectory)vendor\minhook\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions Condition="'$(Configuration)' == 'Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)' == 'Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary Condition="'$(Configuration)' == 'Release'">MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)' == 'Debug'">MultiThreadedDebug</RuntimeLibrary>
+      <Optimization Condition="'$(Configuration)' == 'Release'">MaxSpeed</Optimization>
+      <Optimization Condition="'$(Configuration)' == 'Debug'">Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(IntDir)$(MSBuildProjectName).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+    <Link><SubSystem>Windows</SubSystem><GenerateDebugInformation>true</GenerateDebugInformation><OptimizeReferences Condition="'$(Configuration)' == 'Release'">true</OptimizeReferences><EnableCOMDATFolding Condition="'$(Configuration)' == 'Release'">true</EnableCOMDATFolding><RandomizedBaseAddress>true</RandomizedBaseAddress><DataExecutionPrevention>true</DataExecutionPrevention></Link>
+  </ItemDefinitionGroup>
+ <PropertyGroup><TargetName>Traktor Kontrol S4 MK3 NI Service Helper $(S4Version)</TargetName><S4IsBridge>false</S4IsBridge></PropertyGroup>
+
+ <ItemGroup><ClCompile Include="Traktor Kontrol S4 MK3 NI Service Helper.cpp"/></ItemGroup>
+ <ItemGroup><ClInclude Include="include\bridge_ipc.h"/><ClInclude Include="include\deck_sampler.h"/><ClInclude Include="include\haptic_cue.h"/><ClInclude Include="include\helper_launcher.h"/><ClInclude Include="include\jog_ring.h"/><ClInclude Include="include\ni_service_compatibility.h"/><ClInclude Include="include\ni_service_session.h"/><ClInclude Include="include\runtime_utils.h"/><ClInclude Include="include\screen_takeover.h"/><ClInclude Include="include\signatures\ni_service_signatures.h"/><ClInclude Include="include\signatures\vdj_signatures.h"/><ClInclude Include="include\startup_input.h"/><ClInclude Include="include\vdj_compatibility.h"/><ClInclude Include="vendor\vdjPlugin8.h"/><ClInclude Include="vendor\minhook\include\MinHook.h"/></ItemGroup>
+
+ <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
+  <UsingTask TaskName="S4GenerateIdentity" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup><Version ParameterType="System.String" Required="true"/><OutputDirectory ParameterType="System.String" Required="true"/></ParameterGroup>
+    <Task><Using Namespace="System"/><Using Namespace="System.IO"/><Using Namespace="System.Text"/><Code Type="Fragment" Language="cs"><![CDATA[
+      if (!System.Text.RegularExpressions.Regex.IsMatch(Version, @"^v\d+\.\d+\.\d+$")) { Log.LogError("S4Version must use vMAJOR.MINOR.PATCH."); return false; }
+      Directory.CreateDirectory(OutputDirectory);
+      var helper = "Traktor Kontrol S4 MK3 NI Service Helper " + Version + ".exe";
+      var dll = "Traktor Kontrol S4 MK3 Bridge " + Version + ".dll";
+      var text = "#pragma once\n#define S4_RELEASE_VERSION \""+Version+"\"\n#define S4_HELPER_EXE L\""+helper+"\"\n#define S4_PLUGIN_DLL L\""+dll+"\"\n#define S4_PLUGIN_NAME \"Traktor Kontrol S4 MK3 Bridge "+Version+"\"\n#define S4_RING_LOG L\"Traktor-Kontrol-S4-MK3-Bridge-"+Version+".log\"\n#define S4_PHASE_LOG L\"Traktor-Kontrol-S4-MK3-NI-Service-Helper-"+Version+".log\"\n";
+      var path=Path.Combine(OutputDirectory,"release_identity.h");
+      if(!File.Exists(path)||File.ReadAllText(path)!=text) File.WriteAllText(path,text,new UTF8Encoding(false));
+      path=Path.Combine(OutputDirectory,"Bridge.def");text="EXPORTS\n    DllGetClassObject PRIVATE\n";
+      if(!File.Exists(path)||File.ReadAllText(path)!=text) File.WriteAllText(path,text,new UTF8Encoding(false));
+    ]]></Code></Task>
+  </UsingTask>
+  <UsingTask TaskName="S4GenerateHelperDigest" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup><HelperPath ParameterType="System.String" Required="true"/><OutputDirectory ParameterType="System.String" Required="true"/></ParameterGroup>
+    <Task><Using Namespace="System"/><Using Namespace="System.IO"/><Using Namespace="System.Text"/><Code Type="Fragment" Language="cs"><![CDATA[
+      if(!File.Exists(HelperPath)){Log.LogError("Build NI Service Helper before Bridge. Missing: "+HelperPath);return false;}
+      string digest;using(var sha=System.Security.Cryptography.SHA256.Create())using(var input=File.OpenRead(HelperPath))digest=BitConverter.ToString(sha.ComputeHash(input)).Replace("-","").ToLowerInvariant();
+      Directory.CreateDirectory(OutputDirectory);var path=Path.Combine(OutputDirectory,"release_digest.h");
+      var text="#pragma once\ninline constexpr char NativeHelperSha256[]=\""+digest+"\";\n";
+      if(!File.Exists(path)||File.ReadAllText(path)!=text) File.WriteAllText(path,text,new UTF8Encoding(false));
+    ]]></Code></Task>
+  </UsingTask>
+  <Target Name="GenerateS4Identity" BeforeTargets="ClCompile">
+    <Error Condition="'$(Platform)' != 'x64'" Text="Only x64 is supported."/>
+    <S4GenerateIdentity Version="$(S4Version)" OutputDirectory="$(GeneratedDir)"/>
+    <ItemGroup><FileWrites Include="$(GeneratedDir)release_identity.h;$(GeneratedDir)Bridge.def"/></ItemGroup>
+  </Target>
+  <Target Name="GenerateS4Digest" BeforeTargets="ClCompile" DependsOnTargets="GenerateS4Identity;ResolveProjectReferences" Condition="'$(S4IsBridge)' == 'true'">
+    <S4GenerateHelperDigest HelperPath="$(HelperBinaryPath)" OutputDirectory="$(GeneratedDir)"/>
+    <ItemGroup><FileWrites Include="$(GeneratedDir)release_digest.h"/></ItemGroup>
+  </Target>
+</Project>
