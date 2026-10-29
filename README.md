@@ -12,7 +12,7 @@
 	<a href="https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ?style=for-the-badge"></a>
 </p>
 
-<p align="center"><a href="README_zh.md">中文</a> · <b>English</b></p>
+<p align="center"><b>English</b> · <a href="README_zh.md">中文</a></p>
 
 <p align="center"><a href="#project-introduction">Project Introduction</a> · <a href="#feature-showcase">Feature Showcase</a> · <a href="#how-to-install">How to Install</a> · <a href="#how-to-use">How to Use</a> · <a href="#additional-information">Additional Information</a></p>
 
