@@ -56,7 +56,7 @@ This project provides **almost complete** support for the **Native Instruments T
     <td align="center"><img src="Docs/images/screens/page-03.png" width="200" alt="Effects"><br><b>Effects</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="Docs/images/screens/page-04.png" width="200" alt="Pads"><br><b>Pads</b></td>
+    <td align="center"><img src="Docs/images/screens/page-04.png" width="200" alt="PAD"><br><b>PAD</b></td>
     <td align="center"><img src="Docs/images/screens/page-05.png" width="200" alt="Mixer"><br><b>Mixer</b></td>
     <td align="center"><img src="Docs/images/screens/page-06.png" width="200" alt="Native Browser"><br><b>Native Browser</b></td>
     <td align="center"><img src="Docs/images/screens/page-07.png" width="200" alt="Custom Browser"><br><b>Custom Browser</b></td>
@@ -297,7 +297,7 @@ Select **S4MK3 Settings** as the PAD page in VirtualDJ. Use **Param 1** to cycle
 
 <table align="center">
 <tr><th align="center"><p align="center">1</p></th><th align="center"><p align="center">2</p></th><th align="center"><p align="center">3</p></th><th align="center"><p align="center">4</p></th><th align="center"><p align="center">5</p></th><th align="center"><p align="center">6</p></th><th align="center"><p align="center">7</p></th><th align="center"><p align="center">8</p></th><th align="center"><p align="center">9</p></th><th align="center"><p align="center">10</p></th><th align="center"><p align="center">11</p></th><th align="center"><p align="center">12</p></th></tr>
-<tr><td align="center"><p align="center">Overview</p></td><td align="center"><p align="center">Live Waveform</p></td><td align="center"><p align="center">Spectrum</p></td><td align="center"><p align="center">Effects</p></td><td align="center"><p align="center">Pads</p></td><td align="center"><p align="center">Mixer</p></td><td align="center"><p align="center">Native Browser</p></td><td align="center"><p align="center">Custom Browser</p></td><td align="center"><p align="center">3D Browser</p></td><td align="center"><p align="center">Track Cover</p></td><td align="center"><p align="center">Logo</p></td><td align="center"><p align="center">Video</p></td></tr>
+<tr><td align="center"><p align="center">Overview</p></td><td align="center"><p align="center">Live Waveform</p></td><td align="center"><p align="center">Spectrum</p></td><td align="center"><p align="center">Effects</p></td><td align="center"><p align="center">PAD</p></td><td align="center"><p align="center">Mixer</p></td><td align="center"><p align="center">Native Browser</p></td><td align="center"><p align="center">Custom Browser</p></td><td align="center"><p align="center">3D Browser</p></td><td align="center"><p align="center">Track Cover</p></td><td align="center"><p align="center">Logo</p></td><td align="center"><p align="center">Video</p></td></tr>
 </table>
 
 ### 3. Settings Adjusted from the Software Controller Settings Page
