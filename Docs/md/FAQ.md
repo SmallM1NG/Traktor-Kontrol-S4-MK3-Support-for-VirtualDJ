@@ -29,3 +29,7 @@
 **7.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">A feature-unavailable dialog appears?</b>
 
 &emsp;**A:** This means an internal location or device object required by the affected feature failed validation, so that custom feature has been disabled. Changes in VirtualDJ or NIHardwareService versions can cause this; it does not mean every feature is unavailable. Please submit an issue.
+
+**8.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">The helper EXE does not start and no UAC prompt appears?</b>
+
+&emsp;**A:** Windows may block the helper because it inherited an Internet security mark from the downloaded ZIP. Before extracting, right-click the ZIP, open **Properties**, and select **Unblock** on the General tab if the option is present, then click **Apply** and extract the archive. If you have already extracted it, close VirtualDJ, unblock the paired EXE through its Properties, then restart VirtualDJ.

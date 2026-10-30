@@ -29,3 +29,7 @@
 **7.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">弹出功能不可用的报错框？</b>
 
 &emsp;**A:** 这表示对应功能所需的内部位置或设备对象未通过校验，相关自定义功能已被禁用。VirtualDJ 或 NIHardwareService 的版本变化可能导致这种情况，不代表所有功能都无法使用。请提交 issue。
+
+**8.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">配套 EXE 无法启动，而且没有出现 UAC 提示？</b>
+
+&emsp;**A:** EXE 可能继承了下载 ZIP 的互联网安全标记，导致 Windows 阻止启动。解压前，右键 ZIP 打开**属性**，如果“常规”页有**解除锁定**选项，请勾选并点击**应用**后再解压。如果已经解压，请先关闭 VirtualDJ，在配套 EXE 的属性中解除锁定，再重新启动 VirtualDJ。

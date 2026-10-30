@@ -177,6 +177,10 @@ Download the latest **ZIP archive** from [Releases](https://github.com/SmallM1NG
 </li>
 <li>
 
+Before extracting, right-click the downloaded ZIP archive and select <strong>Properties</strong>. If an <strong>Unblock</strong> checkbox appears at the bottom of the General tab, select it and click <strong>Apply</strong> before extracting. If it is not present, extract normally. This prevents the downloaded-file security mark from blocking the helper EXE's elevation request without showing a UAC prompt.
+
+If you have already extracted the archive and the helper EXE will not start, close VirtualDJ, open the EXE's <strong>Properties</strong> and unblock it in the same way, then restart VirtualDJ.
+
 <strong>Extract all contents</strong> of the archive. It should contain the following files:
 
 ```text

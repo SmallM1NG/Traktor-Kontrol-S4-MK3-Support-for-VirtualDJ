@@ -177,6 +177,10 @@
 </li>
 <li>
 
+解压前，先右键下载的 ZIP 压缩包，打开<strong>属性</strong>。如果“常规”页底部有<strong>解除锁定</strong>选项，请勾选并点击<strong>应用</strong>后再解压；如果没有该选项，正常解压即可。这样可以避免下载文件的安全标记导致配套 EXE 无法提权启动，且不显示 UAC 提示。
+
+如果已经解压且配套 EXE 无法启动，请先关闭 VirtualDJ，再打开该 EXE 的<strong>属性</strong>，按相同方法解除锁定，然后重新启动 VirtualDJ。
+
 <strong>完整解压</strong>压缩包内的内容，应包含以下文件：
 
 ```text
