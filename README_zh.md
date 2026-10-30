@@ -155,6 +155,23 @@
 <ol>
 <li>
 
+<p><strong>先确认系统已安装 NIHardwareService</strong>。通常在安装 Traktor Pro 或 Controller Editor 时，该服务会一并安装。</p>
+<p><strong>检查方法：</strong>按 <code>Win + R</code>，输入 <code>services.msc</code> 并回车，在“服务”列表中查找 <strong>NIHardwareService</strong>。</p>
+<ul>
+  <li><strong>已找到：</strong>确认服务处于“正在运行”状态，然后继续下一步；如果尚未运行，右键选择“启动”后再次确认。</li>
+  <li><strong>未找到：</strong>安装以下任一软件：
+    <ul>
+      <li><a href="https://www.native-instruments.com/zh/products/traktor-pro">Traktor Pro</a></li>
+      <li><a href="https://support.native-instruments.com/support/solutions/articles/69000882238-native-instruments-drivers-other-files#Controller-Editor">Controller Editor（Windows 版）</a></li>
+    </ul>
+    安装完成后，再次打开“服务”检查 NIHardwareService。确认已存在并正在运行后，再继续下一步。
+  </li>
+</ul>
+
+</li>
+
+<li>
+
 从 [Releases](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/latest) 下载最新 **ZIP 压缩包**（当前为 [v0.1.0](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/tag/v0.1.0)）。
 
 </li>

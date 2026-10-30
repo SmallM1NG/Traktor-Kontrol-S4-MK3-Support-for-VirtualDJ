@@ -155,6 +155,23 @@ This project only supports **VirtualDJ 2021 or later** on **Windows x64**, requi
 <ol>
 <li>
 
+<p><strong>First, make sure NIHardwareService is installed on your system.</strong> It is usually installed alongside Traktor Pro or Controller Editor.</p>
+<p><strong>How to check:</strong> Press <code>Win + R</code>, enter <code>services.msc</code> and press Enter. Look for <strong>NIHardwareService</strong> in the Services list.</p>
+<ul>
+  <li><strong>Found:</strong> Confirm that its status is “Running”, then continue to the next step. If it is not running, right-click it, select “Start” and check again.</li>
+  <li><strong>Not found:</strong> Install either of the following:
+    <ul>
+      <li><a href="https://www.native-instruments.com/zh/products/traktor-pro">Traktor Pro</a></li>
+      <li><a href="https://support.native-instruments.com/support/solutions/articles/69000882238-native-instruments-drivers-other-files#Controller-Editor">Controller Editor for Windows</a></li>
+    </ul>
+    After installation, reopen Services and check for NIHardwareService again. Continue only after confirming that it is present and running.
+  </li>
+</ul>
+
+</li>
+
+<li>
+
 Download the latest **ZIP archive** from [Releases](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/latest) (currently [v0.1.0](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/tag/v0.1.0)).
 
 </li>
