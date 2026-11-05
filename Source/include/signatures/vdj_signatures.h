@@ -568,3 +568,4 @@ inline constexpr LayoutProfile NewProfile = {
     sizeof(NewSites) / sizeof(LayoutSite),
     {0x10a5730, 0xef7030, 0x10a5099, 0xef73d4, 0x10a59c0, 0x10a5917}};
 }
+#include "vdj_8472_signatures.h"

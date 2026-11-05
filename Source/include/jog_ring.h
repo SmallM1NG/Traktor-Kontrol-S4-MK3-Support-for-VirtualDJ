@@ -258,8 +258,8 @@ inline void apply(phase18::Frame &frame, const WORD (&angles)[2], bool valid)
 
 namespace physicalJog
 {
-// ZH: JOG 模式累加自动播放相位与手动位移；TT 模式只取实体角度，避免重复旋转。
-// EN: JOG adds automatic playback phase and manual displacement; TT uses hardware angles only.
+// ZH: 未触摸时按选定转速与 Tempo 旋转；TT 反转开启时跟随方向；触摸时只跟随手动位移。
+// EN: Selected speed/Tempo when untouched, optional TT reverse direction, physical delta only while touched.
 class Clock
 {
     // ZH: 状态按左右实体侧保存，不因切 Deck 重置；模式、连接代次或长采样中断会重新建立基线。
@@ -314,16 +314,11 @@ class Clock
             double rpm = f.speedMode == 3 ? f.bpm[side] / 4 : (f.speedMode == 1 ? 100.0 / 3.0 : 45.0) * f.tempo[side];
             bool run = (flags & phase18::Loaded) && !(flags & phase18::LineIn) && (flags & phase18::Playing) &&
                        !touched && !(f.padding & (1u << (side + 4))) && std::isfinite(rpm) && rpm > 0 && rpm <= 75;
-            if (flags & phase18::TT)
-            {
-                phase[side] = physical;
-                running[side] = false;
-            }
-            else
-            {
-                phase[side] = wrap(phase[side] + delta + (run && running[side] ? dt * rpm / 60 : 0));
-                running[side] = run;
-            }
+            // ZH: Reverse 仅由开启的 TT 反转设置发布；手动触摸仍只使用实体位移。
+            // EN: Reverse is published only by the enabled TT reverse setting; touch still uses physical delta only.
+            const double direction = (flags & phase18::TT) && (flags & phase18::Reverse) ? -1.0 : 1.0;
+            phase[side] = wrap(phase[side] + (touched ? delta : (run && running[side] ? direction * dt * rpm / 60 : 0)));
+            running[side] = run;
             if (side)
                 f.right = phase[side];
             else

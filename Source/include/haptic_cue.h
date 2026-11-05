@@ -199,7 +199,7 @@ inline DWORD WINAPI writeThread(void *raw)
     return 0;
 }
 
-inline bool send(HANDLE pipe, const Packet &packet)
+inline bool send(HANDLE pipe, const Packet &packet, DWORD timeoutMs = 200)
 {
     if (packet.bytes.empty() || packet.bytes.size() > 16 + 12 * MaxEntries)
         return false;
@@ -207,7 +207,7 @@ inline bool send(HANDLE pipe, const Packet &packet)
     HANDLE t = CreateThread(nullptr, 0, writeThread, &w, 0, nullptr);
     if (!t)
         return false;
-    DWORD wait = WaitForSingleObject(t, 200);
+    DWORD wait = WaitForSingleObject(t, timeoutMs);
     if (wait != WAIT_OBJECT_0)
     {
         CancelSynchronousIo(t);

@@ -445,9 +445,9 @@ inline Addresses resolve(const Image &image)
     Addresses result;
     result.displayVtable = display;
     result.inputVtable = input;
-    const LayoutProfile *profiles[] = {&OldProfile, &NewProfile};
+    const LayoutProfile *profiles[] = {&OldProfile, &NewProfile, &Legacy8472Profile};
     unsigned inputMatches = 0, displayMatches = 0;
-    for (unsigned group = 0; group < 2; ++group)
+    for (unsigned group = 0; group < sizeof(profiles) / sizeof(profiles[0]); ++group)
     {
         auto &profile = *profiles[group];
         uintptr_t at[6]{};
@@ -491,11 +491,19 @@ struct Hints
 {
     uintptr_t displayVtable, inputVtable, displayVector, rect, input, vectorReference;
     bool newLayout = false;
+    uintptr_t inputAux = 0, displayCtor = 0, displayAux = 0;
+    const LayoutProfile *layout = nullptr;
 };
 
 inline constexpr Hints KnownLocations{0x3f39f20, 0x3f26108, 0x42b2ce8, 0xcdb8c0, 0xbf1d60, 0xcdd5c6};
 inline constexpr Hints KnownLocations9644{0x5175c10, 0x51504c8, 0x579e0c8, 0x10a5730, 0xef7030, 0x10a5099, true};
-inline constexpr Hints KnownCandidates[]{KnownLocations, KnownLocations9644};
+inline constexpr Hints KnownLocations9729{0x51a53d0, 0x517f3a0, 0x57d30b8, 0x10cd4c0, 0xf1f0e0, 0x10cce29,
+                                         true, 0xf1f484, 0x10cd750, 0x10cd6a7};
+inline constexpr Hints KnownLocations9746{0x5443898, 0x541d770, 0x5a9e238, 0x10decd0, 0xf2fe90, 0x10de639,
+                                         true, 0xf30234, 0x10def60, 0x10deeb7};
+inline constexpr Hints KnownLocations8472{0x3bf41c8, 0x3be3550, 0x3f41740, 0xb72e00, 0xaaa2e0, 0xb74a93,
+                                         false, 0xaaa6c5, 0xb73110, 0xb7304a, &Legacy8472Profile};
+inline constexpr Hints KnownCandidates[]{KnownLocations, KnownLocations9644, KnownLocations9729, KnownLocations9746, KnownLocations8472};
 
 inline bool complete(const Addresses &a)
 {
@@ -508,13 +516,13 @@ inline Addresses fast(const Image &image, const Hints &hint = KnownLocations)
     auto display = image.base + hint.displayVtable, input = image.base + hint.inputVtable;
     if (!image.validVtable(display, ".?AVCTraktorDisplay@@") || !image.validVtable(input, ".?AVCHIDController@@"))
         return {};
-    const auto &profile = hint.newLayout ? NewProfile : OldProfile;
+    const auto &profile = hint.layout ? *hint.layout : (hint.newLayout ? NewProfile : OldProfile);
     uintptr_t at[6] = {image.base + hint.rect,
                        image.base + hint.input,
                        image.base + hint.vectorReference,
-                       image.base + profile.functions[3],
-                       image.base + profile.functions[4],
-                       image.base + profile.functions[5]};
+                       image.base + (hint.inputAux ? hint.inputAux : profile.functions[3]),
+                       image.base + (hint.displayCtor ? hint.displayCtor : profile.functions[4]),
+                       image.base + (hint.displayAux ? hint.displayAux : profile.functions[5])};
     for (unsigned i = 0; i < 6; ++i)
         if (!image.matches(at[i], profile.patterns[i].bytes, profile.patterns[i].mask, profile.patterns[i].size))
             return {};
@@ -568,7 +576,7 @@ inline Addresses adaptiveCandidates(HMODULE module, Timing &times, const Hints *
 
 inline Addresses adaptive(HMODULE module, Timing &times)
 {
-    return adaptiveCandidates(module, times, KnownCandidates, 2);
+    return adaptiveCandidates(module, times, KnownCandidates, sizeof(KnownCandidates) / sizeof(Hints));
 }
 
 inline Addresses adaptive(HMODULE module, Timing &times, const Hints &hint)

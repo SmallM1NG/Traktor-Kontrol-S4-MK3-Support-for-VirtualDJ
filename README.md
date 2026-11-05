@@ -16,7 +16,7 @@
 
 <p align="center"><a href="#project-introduction">Project Introduction</a> · <a href="#feature-showcase">Feature Showcase</a> · <a href="#how-to-install">How to Install</a> · <a href="#how-to-use">How to Use</a> · <a href="#additional-information">Additional Information</a></p>
 
-<p align="center"><a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/CHANGELOG.md">Changelog</a></p>
+<p align="center"><a href="Docs/md/SUPPORTED_VERSIONS.md">Supported Versions</a> · <a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/CHANGELOG.md">Changelog</a></p>
 
 ---
 
@@ -34,7 +34,7 @@ This project provides **almost complete** support for the **Native Instruments T
 
 > [!WARNING]
 > This project is independently maintained by an enthusiast and is not affiliated with VirtualDJ or Native Instruments.  
-> This project only supports <strong>Windows x64</strong>, was developed against **VirtualDJ build 9005**, and has only been tested with builds **9005 / 9644**. Not all features are guaranteed to work correctly with every version.  
+> This project only supports <strong>Windows x64</strong>, was developed against **VirtualDJ build 9005**, and has only been tested with builds **9005 / 9644**. Not all features are guaranteed to work correctly with every version. See [Supported Versions](Docs/md/SUPPORTED_VERSIONS.md) for details.  
 > Some features are experimental and have not undergone long-term testing. Stability issues may occur; you assume responsibility for any resulting losses.
 
 <a id="feature-showcase"></a>
@@ -51,19 +51,19 @@ This project provides **almost complete** support for the **Native Instruments T
 <table align="center">
   <tr>
     <td align="center"><img src="Docs/images/screens/page-12.png" width="200" alt="Overview"><br><b>Overview</b></td>
-    <td align="center"><img src="Docs/images/screens/page-01.png" width="200" alt="Live Waveform"><br><b>Live Waveform</b></td>
+    <td align="center"><img src="Docs/images/screens/page-01.png" width="200" alt="Waveform"><br><b>Waveform</b></td>
     <td align="center"><img src="Docs/images/screens/page-02.png" width="200" alt="Spectrum"><br><b>Spectrum</b></td>
     <td align="center"><img src="Docs/images/screens/page-03.png" width="200" alt="Effects"><br><b>Effects</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="Docs/images/screens/page-04.png" width="200" alt="PAD"><br><b>PAD</b></td>
+    <td align="center"><img src="Docs/images/screens/page-04.png" width="200" alt="Pads"><br><b>Pads</b></td>
     <td align="center"><img src="Docs/images/screens/page-05.png" width="200" alt="Mixer"><br><b>Mixer</b></td>
     <td align="center"><img src="Docs/images/screens/page-06.png" width="200" alt="Native Browser"><br><b>Native Browser</b></td>
     <td align="center"><img src="Docs/images/screens/page-07.png" width="200" alt="Custom Browser"><br><b>Custom Browser</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="Docs/images/screens/page-08.png" width="200" alt="3D Browser"><br><b>3D Browser</b></td>
-    <td align="center"><img src="Docs/images/screens/page-09.png" width="200" alt="Track Cover"><br><b>Track Cover</b></td>
+    <td align="center"><img src="Docs/images/screens/page-08.png" width="200" alt="Cover Browser"><br><b>Cover Browser</b></td>
+    <td align="center"><img src="Docs/images/screens/page-09.png" width="200" alt="Cover"><br><b>Cover</b></td>
     <td align="center"><img src="Docs/images/screens/page-10.png" width="200" alt="Logo"><br><b>Logo</b></td>
     <td align="center"><img src="Docs/images/screens/page-11.png" width="200" alt="Video"><br><b>Video</b></td>
   </tr>
@@ -161,8 +161,8 @@ This project only supports **VirtualDJ 2021 or later** on **Windows x64**, requi
   <li><strong>Found:</strong> Confirm that its status is “Running”, then continue to the next step. If it is not running, right-click it, select “Start” and check again.</li>
   <li><strong>Not found:</strong> Install either of the following:
     <ul>
-      <li><a href="https://www.native-instruments.com/zh/products/traktor-pro">Traktor Pro</a></li>
-      <li><a href="https://support.native-instruments.com/support/solutions/articles/69000882238-native-instruments-drivers-other-files#Controller-Editor">Controller Editor for Windows</a></li>
+      <li><a href="https://www.native-instruments.com/en/products/traktor-pro/">Traktor Pro (Windows)</a></li>
+      <li><a href="https://support.native-instruments.com/support/solutions/articles/69000882238-native-instruments-drivers-other-files#Controller-Editor">Controller Editor (Windows)</a></li>
     </ul>
     After installation, reopen Services and check for NIHardwareService again. Continue only after confirming that it is present and running.
   </li>
@@ -172,7 +172,7 @@ This project only supports **VirtualDJ 2021 or later** on **Windows x64**, requi
 
 <li>
 
-Download the latest **ZIP archive** from [Releases](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/latest) (currently [v0.1.0](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/tag/v0.1.0)).
+Download the latest **ZIP archive** from [Releases](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/latest) (currently [v0.1.1](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/releases/tag/v0.1.1)).
 
 </li>
 <li>
@@ -184,8 +184,8 @@ If you have already extracted the archive and the helper EXE will not start, clo
 <strong>Extract all contents</strong> of the archive. It should contain the following files:
 
 ```text
-Traktor Kontrol S4 MK3 Bridge v0.1.0.dll
-Traktor Kontrol S4 MK3 NI Service Helper v0.1.0.exe
+Traktor Kontrol S4 MK3 Bridge v0.1.1.dll
+Traktor Kontrol S4 MK3 NI Service Helper v0.1.1.exe
 Traktor Kontrol S4 MK3 Screen Preview (Default).zip
 Traktor Kontrol S4 MK3 Screen.zip
 Traktor Kontrol S4 MK3.zip
@@ -208,8 +208,8 @@ S4MK3 Settings.xml
 
 | File | Destination (relative to the VirtualDJ data folder) | Notes |
 | --- | --- | --- |
-| `Traktor Kontrol S4 MK3 Bridge v0.1.0.dll` | `Plugins64\AutoStart` | <strong>Keep alongside the matching EXE</strong> |
-| `Traktor Kontrol S4 MK3 NI Service Helper v0.1.0.exe` | `Plugins64\AutoStart` | <strong>Keep alongside the matching DLL</strong> |
+| `Traktor Kontrol S4 MK3 Bridge v0.1.1.dll` | `Plugins64\AutoStart` | <strong>Keep alongside the matching EXE</strong> |
+| `Traktor Kontrol S4 MK3 NI Service Helper v0.1.1.exe` | `Plugins64\AutoStart` | <strong>Keep alongside the matching DLL</strong> |
 | `Traktor Kontrol S4 MK3.zip` | `Devices` | <strong>Do not extract</strong> |
 | `Traktor Kontrol S4 MK3 Screen.zip` | `Skins` | <strong>Do not extract</strong> |
 | `Traktor Kontrol S4 MK3 Screen Preview (Default).zip` | `Skins` | <strong>Do not extract</strong> |
@@ -218,7 +218,7 @@ S4MK3 Settings.xml
 </li>
 <li>
 
-Launch VirtualDJ. If **Traktor Kontrol S4 MK3 Bridge v0.1.0** appears in the Master effects list, installation is complete.
+Launch VirtualDJ. If **Traktor Kontrol S4 MK3 Bridge v0.1.1** appears in the Master effects list, installation is complete.
 
 </li>
 </ol>
@@ -247,8 +247,8 @@ Select **S4MK3 Settings** as the PAD page in VirtualDJ. Use **Param 1** to cycle
 | Page | Purpose |
 | --- | --- |
 | `TT/COLOR` | Toggle TT mode and adjust Deck colors |
-| `Screen Style` | Adjust time display, waveform and spectrum appearance, and played-section color shading |
 | `Screen Switch` | Change screen pages and configure AUTO and preview windows |
+| `Screen Style` | Adjust time display, waveform and spectrum appearance, played-section color shading, title scrolling, and custom browser layout |
 
 #### TT Mode and Deck Colors
 
@@ -258,31 +258,12 @@ Select **S4MK3 Settings** as the PAD page in VirtualDJ. Use **Param 1** to cycle
   <img src="Docs/images/settings/settings-02.png" width="600" alt="TT Mode and Deck Colors">
 </p>
 <table>
-<thead><tr><th>Control</th><th>Function</th></tr></thead>
+<thead><tr><th>Name</th><th>Function</th></tr></thead>
 <tbody>
 <tr><td><code>TT ON/OFF</code></td><td>Toggle TT mode for the current Deck</td></tr>
 <tr><td><code>DECK COLOR</code></td><td>Apply the current Deck color to the corresponding device Deck. Recognizes the 17 supported colors and their aliases; other colors preserve the existing bright/dim pair</td></tr>
 <tr><td><code>PREV COLOR</code> / <code>NEXT COLOR</code></td><td>Cycle through 17 colors</td></tr>
 <tr><td><code>CURRENT BRIGHT</code> / <code>CURRENT DIM</code></td><td>Display the current bright and dim colors</td></tr>
-</tbody>
-</table>
-
-#### Screen Style
-
-<p>On the <strong>Screen Style</strong> page:</p>
-
-<p align="left">
-  <img src="Docs/images/settings/settings-03.png" width="600" alt="Screen Style">
-</p>
-<table>
-<thead><tr><th>Control</th><th>Function</th></tr></thead>
-<tbody>
-<tr><td><code>ELAPSED / REMAIN</code></td><td>Switch between elapsed and remaining time</td></tr>
-<tr><td><code>TIME DECIMALS ON/OFF</code></td><td>Show / hide time decimals</td></tr>
-<tr><td><code>SHADOW ON/OFF</code></td><td>Show / hide the live waveform beat background shading</td></tr>
-<tr><td><code>BEAT NUMBERS ON/OFF</code></td><td>Show / hide live waveform beat numbers</td></tr>
-<tr><td><code>SPECTRUM WHITE ON/OFF</code></td><td>Toggle the white spectrum display</td></tr>
-<tr><td><code>PLAYED COLOR ON/OFF</code></td><td>Toggle Deck-colored shading over the played overview waveform; retain native darkening when off</td></tr>
 </tbody>
 </table>
 
@@ -294,7 +275,7 @@ Select **S4MK3 Settings** as the PAD page in VirtualDJ. Use **Param 1** to cycle
   <img src="Docs/images/settings/settings-04.png" width="600" alt="Screen Pages and Previews">
 </p>
 <table>
-<thead><tr><th>Control</th><th>Function</th></tr></thead>
+<thead><tr><th>Name</th><th>Function</th></tr></thead>
 <tbody>
 <tr><td><code>SCREEN PREVIEW ON/OFF</code></td><td>Show / hide screen preview windows</td></tr>
 <tr><td><code>PREVIEW: COMBINED / SEPARATE</code></td><td>Switch between combined and separate preview windows</td></tr>
@@ -316,9 +297,31 @@ Select **S4MK3 Settings** as the PAD page in VirtualDJ. Use **Param 1** to cycle
 <p><strong>AUTO:</strong> Enable <code>AUTO ON/OFF</code> on Screen Switch. Using the corresponding controller browse knob opens the last browser page; loading or cloning a track from the controller restores the last non-browser page. Mouse and keyboard actions do not trigger this automatic page switching.</p>
 <p><strong>Preview windows:</strong> Select the <strong>Traktor Kontrol S4 MK3 Screen Preview (Default)</strong> skin, then use <code>SCREEN PREVIEW ON/OFF</code> on Screen Switch to show or hide previews. Use <code>PREVIEW: COMBINED / SEPARATE</code> to choose combined or separate windows. Windows are resizable; scaled previews are not guaranteed to match hardware screens pixel for pixel.</p>
 
+
 <table align="center">
 <tr><th align="center"><p align="center">1</p></th><th align="center"><p align="center">2</p></th><th align="center"><p align="center">3</p></th><th align="center"><p align="center">4</p></th><th align="center"><p align="center">5</p></th><th align="center"><p align="center">6</p></th><th align="center"><p align="center">7</p></th><th align="center"><p align="center">8</p></th><th align="center"><p align="center">9</p></th><th align="center"><p align="center">10</p></th><th align="center"><p align="center">11</p></th><th align="center"><p align="center">12</p></th></tr>
-<tr><td align="center"><p align="center">Overview</p></td><td align="center"><p align="center">Live Waveform</p></td><td align="center"><p align="center">Spectrum</p></td><td align="center"><p align="center">Effects</p></td><td align="center"><p align="center">PAD</p></td><td align="center"><p align="center">Mixer</p></td><td align="center"><p align="center">Native Browser</p></td><td align="center"><p align="center">Custom Browser</p></td><td align="center"><p align="center">3D Browser</p></td><td align="center"><p align="center">Track Cover</p></td><td align="center"><p align="center">Logo</p></td><td align="center"><p align="center">Video</p></td></tr>
+<tr><td align="center"><p align="center">Overview</p></td><td align="center"><p align="center">Waveform</p></td><td align="center"><p align="center">Spectrum</p></td><td align="center"><p align="center">Effects</p></td><td align="center"><p align="center">Pads</p></td><td align="center"><p align="center">Mixer</p></td><td align="center"><p align="center">Native Browser</p></td><td align="center"><p align="center">Custom Browser</p></td><td align="center"><p align="center">Cover Browser</p></td><td align="center"><p align="center">Cover</p></td><td align="center"><p align="center">Logo</p></td><td align="center"><p align="center">Video</p></td></tr>
+</table>
+
+#### Screen Style
+
+<p>On the <strong>Screen Style</strong> page:</p>
+
+<p align="left">
+  <img src="Docs/images/settings/settings-03.png" width="600" alt="Screen Style">
+</p>
+<table>
+<thead><tr><th>Name</th><th>Function</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td><code>ELAPSED / REMAIN</code></td><td>Switch between elapsed and remaining time</td><td>Remaining time</td></tr>
+<tr><td><code>TIME DECIMALS ON/OFF</code></td><td>Show / hide time decimals</td><td>Off</td></tr>
+<tr><td><code>SHADOW ON/OFF</code></td><td>Show / hide the live waveform beat background shading</td><td>Off</td></tr>
+<tr><td><code>BEAT NUMBERS ON/OFF</code></td><td>Show / hide live waveform beat numbers</td><td>Off</td></tr>
+<tr><td><code>SPECTRUM WHITE ON/OFF</code></td><td>Toggle the white spectrum display</td><td>Off</td></tr>
+<tr><td><code>PLAYED COLOR ON/OFF</code></td><td>Toggle Deck-colored shading over the played overview waveform; retain native darkening when off</td><td>Off</td></tr>
+<tr><td><code>TITLE SCROLL ON/OFF</code></td><td>Toggle long-title scrolling on pages 1–6.</td><td>Off</td></tr>
+<tr><td><code>BROWSER 1/2 LINES</code></td><td>Switch the custom browser between single-line and two-line layouts.</td><td>Single line</td></tr>
+</tbody>
 </table>
 
 ### 3. Settings Adjusted from the Software Controller Settings Page
@@ -338,24 +341,30 @@ Select **S4MK3 Settings** as the PAD page in VirtualDJ. Use **Param 1** to cycle
   <img src="Docs/images/settings/settings-01.png" width="600" alt="VirtualDJ Controller Settings">
   <br><b>VirtualDJ Controller Settings</b>
 </p>
+<p>The screenshots show example settings. The defaults below apply only when no saved value exists; existing settings are retained.</p>
 <table>
-<thead><tr><th>Setting Name</th><th>Description</th></tr></thead>
+<thead><tr><th>Setting Name</th><th>Description</th><th>Default</th></tr></thead>
 <tbody>
-<tr><td><code>JogLEDMode</code></td><td>Set the Jog ring pointer mode. <strong>Physical Jog</strong> adds manual movement to playback rotation, follows only manual movement when touched or paused, and follows the physical platter directly in TT mode. <strong>Absolute Position</strong> fully follows the pointer position in the software.</td></tr>
-<tr><td><code>TTTurntableSpeed</code></td><td>Set the platter rotation speed. Selecting <strong>33.3 / 45 RPM</strong> uses the corresponding base speed and adjusts it according to the Tempo fader position; <strong>BPM / 4 (Experimental)</strong> calculates the speed as the current BPM divided by four. The maximum is <strong>75 RPM</strong>; exceeding it stops the motor. Rotation resumes when the speed returns within range, TT is enabled and the track is playing.</td></tr>
-<tr><td><code>TicksWhenNudging</code></td><td>Set the haptic ticks during playback in Jog mode. Select <strong>None</strong> to disable them, <strong>Coarse</strong> for coarse ticks, or <strong>Fine</strong> for fine ticks. Applies to both Jog wheels.</td></tr>
-<tr><td><code>JogwheelTension</code></td><td>Set the rotation resistance for both Jog wheels by entering an integer from <strong>0 to 255</strong>. Higher values increase resistance; 0 is the lightest.</td></tr>
-<tr><td><code>HapticHotcues</code></td><td>Set whether Cue point haptic feedback is enabled: select <strong>yes</strong> to enable it or <strong>no</strong> to disable it. Feedback is provided at the main Cue, <strong>Hotcue points 1–8</strong> and the start/end points of <strong>Saved Loops 1–8</strong>.</td></tr>
-<tr><td><code>Screen Output Takeover</code></td><td>Set the output method for the device screens. When <strong>ON</strong>, a <strong>background thread in the DLL</strong> sends screen frames without affecting skin rendering in the main software interface, significantly reducing stutter in the main interface. When <strong>OFF</strong>, native VirtualDJ output is restored. This setting applies to both screens.</td></tr>
+<tr><td><code>JogLEDRingMode</code></td><td>Set the Jog ring pointer mode. <strong>Traktor Style</strong> rotates at the speed selected in <strong>TTModeBaseSpeed</strong>, adjusted by Tempo. While touched, it follows manual movement; after release, automatic rotation resumes. With TT and <strong>TTModeReverse</strong> enabled, automatic rotation follows reverse / dump direction; otherwise it rotates forward. <strong>Pointer Position</strong> follows the software pointer position.</td><td>Pointer Position</td></tr>
+<tr><td><code>TTModeBaseSpeed</code></td><td>Set the platter rotation speed. Selecting <strong>33.3 / 45 RPM</strong> uses the corresponding base speed and adjusts it according to the Tempo fader position; <strong>BPM / 4</strong> is experimental and calculates the speed as the current BPM divided by four. The maximum is <strong>75 RPM</strong>; exceeding it stops the motor. Rotation resumes when the speed returns within range, TT is enabled and the track is playing.</td><td>33.3 RPM</td></tr>
+<tr><td><code>TTModeReverse</code></td><td>Select <strong>yes</strong> to enable or <strong>no</strong> to disable motor reversal with reverse / dump playback in TT mode. <strong>Experimental.</strong> Disabled by default; has no effect outside TT mode.</td><td>no</td></tr>
+<tr><td><code>TicksWhenNudging</code></td><td>Set the haptic ticks during playback in Jog mode. Select <strong>None</strong> to disable them, <strong>Coarse</strong> for coarse ticks, or <strong>Fine</strong> for fine ticks. Applies to both Jog wheels.</td><td>None</td></tr>
+<tr><td><code>JogwheelTension</code></td><td>Set the rotation resistance for both Jog wheels by entering an integer from <strong>0 to 255</strong>. Higher values increase resistance; 0 is the lightest.</td><td>0</td></tr>
+<tr><td><code>HapticHotcues</code></td><td>Set whether Cue point haptic feedback is enabled: select <strong>yes</strong> to enable it or <strong>no</strong> to disable it. Feedback is provided at the main Cue, <strong>Hotcue points 1–8</strong> and the start/end points of <strong>Saved Loop 1–8</strong>.</td><td>no</td></tr>
+<tr><td><code>ScreenOutputTakeover</code></td><td>Set the output method for the device screens. When <strong>yes</strong>, a <strong>background thread in the DLL</strong> sends screen frames without affecting skin rendering in the main software interface, significantly reducing stutter in the main interface. When <strong>no</strong>, native VirtualDJ output is restored. This setting applies to both screens.</td><td>yes</td></tr>
 </tbody>
 </table>
+
+### 4. Using Other Mappings
+
+The repository also provides [mapping files for this project](VirtualDJ/Mappers), which you can choose to use.
 
 ---
 
 <a id="additional-information"></a>
 ## Additional Information 📚
 
-<p align="center"><a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/FAQ.md">FAQ</a></p>
+<p align="center"><a href="Docs/md/SUPPORTED_VERSIONS.md">Supported Versions</a> · <a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/CHANGELOG.md">Changelog</a></p>
 
 ### Additional Notes 💡
 
@@ -364,7 +373,12 @@ Select **S4MK3 Settings** as the PAD page in VirtualDJ. Use **Param 1** to cycle
 >
 > 1. **Jog rim nudging in TT mode:** With TT enabled, touching the side of the platter cannot temporarily speed up or slow down playback. I tried several approaches, but each had stability issues. With limited energy left to keep trying, I have put this aside for now.
 > 2. **HapticHotcues point detection:** Only Hotcue / Saved Loop points numbered 1–8 are supported; marker-only or hidden points are not supported. A Hotcue set while a Loop is active behaves like a Saved Loop, but its Loop length cannot be read correctly. Restart VirtualDJ and let it automatically become a Saved Loop before its length can be read correctly.
-> 3. **Motor speed limit:** The motor speed limit is <strong>75 RPM (300 BPM ÷ 4)</strong> and applies to all speed modes. This limit is imposed because it is unclear whether higher speeds could damage the motor. If the speed about to be sent to the motor exceeds the limit, it is rejected and the motor stops immediately. Once the speed returns within the limit, rotation resumes automatically while TT mode is enabled and the track is playing.
+
+> [!WARNING]
+> **Limits and Experimental Features**
+>
+> 1. **Motor speed limit:** The motor speed limit is <strong>75 RPM (300 BPM ÷ 4)</strong> and applies to all speed modes. This limit is imposed because it is unclear whether higher speeds could damage the motor. If the speed about to be sent to the motor exceeds the limit, it is rejected and the motor stops immediately. Once the speed returns within the limit, rotation resumes automatically while TT mode is enabled and the track is playing.
+> 2. **Experimental features:** Motor reverse (`TTModeReverse`) and **BPM / 4** speed mode have not undergone long-term testing, and their stability is not guaranteed. Use them at your discretion and at your own risk.
 
 
 ---

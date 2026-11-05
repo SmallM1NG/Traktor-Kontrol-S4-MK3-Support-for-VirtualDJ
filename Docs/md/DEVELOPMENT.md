@@ -18,7 +18,7 @@ Open [Traktor Kontrol S4 MK3.slnx](../../Source/Traktor%20Kontrol%20S4%20MK3.sln
 
 Output: `Source/artifacts/x64/Release/`. Both runtime files are placed together. Building neither installs files nor starts VirtualDJ/the helper. Do not treat the DLL project as a normal executable for F5 launch.
 
-Bridge references NI Service Helper: MSBuild finishes the EXE first, generates its SHA-256 header, then builds the DLL. The two `.vcxproj` files contain the version (v0.1.0), compiler options, output paths and inline MSBuild C# tasks that generate release_identity.h, release_digest.h and the DLL export definition. No Python or external build script is required. Generated files only change when their content changes, preserving incremental builds.
+Bridge references NI Service Helper: MSBuild finishes the EXE first, generates its SHA-256 header, then builds the DLL. The two `.vcxproj` files contain the version (v0.1.1), compiler options, output paths and inline MSBuild C# tasks that generate release_identity.h, release_digest.h and the DLL export definition. No Python or external build script is required. Generated files only change when their content changes, preserving incremental builds.
 
 ### Command Line
 
@@ -28,7 +28,7 @@ From the repository root, run this in Visual Studio **Developer PowerShell** or 
 msbuild "Source/Traktor Kontrol S4 MK3.slnx" /m /t:Build /p:Configuration=Release /p:Platform=x64
 ```
 
-To change the version, set `S4Version` in both `.vcxproj` files or pass `/p:S4Version=v0.1.0`. Use `vMAJOR.MINOR.PATCH` and the same value for both projects. Rebuild Bridge after the EXE changes to update the digest binding.
+To change the version, set `S4Version` in both `.vcxproj` files or pass `/p:S4Version=v0.1.1`. Use `vMAJOR.MINOR.PATCH` and the same value for both projects. Rebuild Bridge after the EXE changes to update the digest binding.
 
 ## Source Layout
 
@@ -112,7 +112,7 @@ flowchart TB
 | Sampling | The DLL targets 10ms / 100Hz SDK sampling; physical angles come from the native input callback without additional USB reads. |
 | Interprocess transfer | Shared snapshots carry sequence numbers, session identity, connection generation and timestamps. Events wake consumers when data changes. |
 | Hardware output | The EXE uses the existing NI pipe and validated service caches. Ordinary commands are serialized, with motor commands prioritized. |
-| Ring phase | With TT off, Physical Jog combines playback phase and manual movement; touch, pause and CUE preview hold automatic phase. With TT on, it follows physical angles directly. Absolute Position follows the software pointer position. |
+| Ring phase | Traktor Style uses TTModeBaseSpeed and Tempo for automatic playback rotation. Touch follows manual displacement; release resumes automatic rotation. With TT and TTModeReverse enabled, automatic rotation follows reverse/dump; otherwise it stays forward. Pause and CUE preview hold automatic rotation. Pointer Position follows the software pointer. |
 
 Takeover changes the pixel transport path; VirtualDJ still renders the content. The background queue retains the latest image and merges updates. Approximately 60Hz per side is a software scheduling target.
 
@@ -132,7 +132,7 @@ Logs are saved automatically in `Plugins64\AutoStart` inside the VirtualDJ data 
 
 | Log file | Main contents |
 | --- | --- |
-| `Traktor-Kontrol-S4-MK3-Bridge-v0.1.0.log` | DLL loading, VirtualDJ compatibility checks, device connection, helper launch and screen output |
-| `Traktor-Kontrol-S4-MK3-NI-Service-Helper-v0.1.0.log` | NI service connection, motor, ring and haptic control, and cleanup results after abnormal termination |
+| `Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log` | DLL loading, VirtualDJ compatibility checks, device connection, helper launch and screen output |
+| `Traktor-Kontrol-S4-MK3-NI-Service-Helper-v0.1.1.log` | NI service connection, motor, ring and haptic control, and cleanup results after abnormal termination |
 
 When a log exceeds 10 MB, the previous session’s contents are automatically cleared. Please attach the logs when reporting a problem.

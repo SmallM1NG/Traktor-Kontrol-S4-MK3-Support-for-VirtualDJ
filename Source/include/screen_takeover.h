@@ -57,6 +57,77 @@ struct Snapshot
     std::array<uint32_t, Width * Height> pixels{};
 };
 
+inline uint16_t rgb565(uint32_t c)
+{
+    return static_cast<uint16_t>(((c >> 19) & 31u) << 11 | ((c >> 10) & 63u) << 5 | ((c >> 3) & 31u));
+}
+
+// Compare against successful output, not the last submitted frame. Skipped/merged frames
+// must not advance the device baseline. Ignore differences discarded by RGB565 conversion.
+struct Delta
+{
+    std::array<uint16_t, Width * Height> sent{};
+    bool known = false;
+
+    bool prepare(Snapshot &s, std::vector<Rect> *regions = nullptr) const
+    {
+        if (regions) regions->clear();
+        if (!known) { if (regions) regions->push_back(s.rect); return true; }
+        Rect r = s.rect;
+        int left = Width, top = Height, right = 0, bottom = 0;
+        for (int y = r.y; y < r.y+r.h; ++y)
+        {
+            int rowLeft = Width, rowRight = 0;
+            for (int x = r.x; x < r.x+r.w; ++x)
+                if (sent[y*Width+x] != rgb565(s.pixels[y*Width+x]))
+                {
+                    left = (std::min)(left,x); top = (std::min)(top,y);
+                    right = (std::max)(right,x+1); bottom = (std::max)(bottom,y+1);
+                    rowLeft = (std::min)(rowLeft,x); rowRight = x+1;
+                }
+            if (regions && rowLeft < rowRight)
+            {
+                rowLeft &= ~1; rowRight = (rowRight+1)&~1;
+                Rect row{rowLeft,y,rowRight-rowLeft,1};
+                if (!regions->empty())
+                {
+                    auto &last = regions->back(); auto joined = unite(last,row);
+                    // Spend <=1KiB extra pixels to avoid a tiny additional pipe write.
+                    if (joined.w*joined.h <= last.w*last.h+row.w*row.h+512)
+                    { last = joined; continue; }
+                }
+                regions->push_back(row);
+            }
+        }
+        if (left >= right) return false;
+        // Bound packet count and memory, merging adjacent bands with the least extra pixels.
+        while (regions && regions->size() > 16)
+        {
+            size_t best = 0; int cost = Width*Height;
+            for (size_t i = 0; i+1 < regions->size(); ++i)
+            {
+                auto a = (*regions)[i], b = (*regions)[i+1], joined = unite(a,b);
+                int extra = joined.w*joined.h-a.w*a.h-b.w*b.h;
+                if (extra < cost) { best = i; cost = extra; }
+            }
+            (*regions)[best] = unite((*regions)[best],(*regions)[best+1]);
+            regions->erase(regions->begin()+best+1);
+        }
+        left &= ~1; right = (right+1)&~1;
+        s.rect = {left,top,right-left,bottom-top};
+        return true;
+    }
+
+    void commit(const Snapshot &s)
+    {
+        const auto r = s.rect;
+        for (int y = r.y; y < r.y+r.h; ++y)
+            for (int x = r.x; x < r.x+r.w; ++x)
+                sent[y*Width+x] = rgb565(s.pixels[y*Width+x]);
+        known = true;
+    }
+};
+
 // ZH: 调用者只持有短时状态锁，此处禁止 I/O、分配和 GPU 访问。
 // EN: Caller holds a short state lock. No I/O, allocation or GPU access here.
 struct Latest
@@ -169,7 +240,7 @@ inline bool packet(const Snapshot &s, std::vector<uint8_t> &out)
         for (int x = r.x; x < r.x + r.w; ++x)
         {
             uint32_t c = s.pixels[y * Width + x];
-            unsigned v = ((c >> 19) & 31u) << 11 | ((c >> 10) & 63u) << 5 | ((c >> 3) & 31u);
+            unsigned v = rgb565(c);
             be16(out.data() + at, v);
             at += 2;
         }
@@ -273,6 +344,9 @@ class Pump
     std::atomic<bool> accepting{false};
     LARGE_INTEGER qpcFrequency{};
     Timing writeTiming[2], latestTiming[2], oldestTiming[2], queueTiming[2];
+    Timing diffTiming[2], packTiming[2];
+    ULONGLONG offered[2]{}, identical[2]{}, sourcePixels[2]{}, outputPixels[2]{};
+    ULONGLONG packetCount[2]{};
     ULONGLONG sideSent[2]{}, sideBytes[2]{}, priorSent[2]{}, priorBytes[2]{}, lastMetricTick = 0;
     std::atomic<ULONGLONG> accepted{0}, merged{0}, sent{0}, bytes{0}, errors{0}, maxSubmitUs{0};
 
@@ -314,6 +388,10 @@ class Pump
                     q.count ? q.sumUs / q.count : 0, q.maxUs, q.p95UpperMs());
                 priorSent[side] = sideSent[side];
                 priorBytes[side] = sideBytes[side];
+                const auto &d = diffTiming[side]; const auto &p = packTiming[side];
+                liveLogPrintf(f, "  screen_work side=%u offered=%llu identical=%llu source_pixels=%llu output_pixels=%llu diff_us_avg_max=%llu/%llu pack_us_avg_max=%llu/%llu packets=%llu\n",
+                    side,offered[side],identical[side],sourcePixels[side],outputPixels[side],
+                    d.count ? d.sumUs/d.count : 0,d.maxUs,p.count ? p.sumUs/p.count : 0,p.maxUs,packetCount[side]);
             }
             lastMetricTick = tick;
             fclose(f);
@@ -331,8 +409,10 @@ class Pump
     {
         report("worker_ready");
         auto snapshot = std::make_unique<screenframes::Snapshot>();
-        std::vector<uint8_t> data;
-        data.reserve(153648);
+        auto delta = std::make_unique<std::array<screenframes::Delta,2>>();
+        std::vector<screenframes::Rect> regions;
+        regions.reserve(screenframes::Height);
+        std::array<std::vector<uint8_t>,16> packets;
         unsigned turn = 0;
         ULONGLONG lastLog = GetTickCount64();
         HANDLE waits[] = {stopEvent, wake};
@@ -353,6 +433,7 @@ class Pump
                     {
                         for (auto &clock : cadence)
                             clock = runtimetime::Cadence(frequency);
+                        for (auto &image : *delta) image.known = false;
                         previous = lease;
                     }
                     LARGE_INTEGER now{};
@@ -362,8 +443,31 @@ class Pump
                         continue;
                     job = lease;
                 }
-                if (!screenframes::packet(*snapshot, data))
+                ++offered[side];
+                sourcePixels[side] += static_cast<ULONGLONG>(snapshot->rect.w)*snapshot->rect.h;
+                LARGE_INTEGER diffBegin{}, packBegin{}, packEnd{};
+                QueryPerformanceCounter(&diffBegin);
+                bool changed = (*delta)[side].prepare(*snapshot, &regions);
+                QueryPerformanceCounter(&packBegin);
+                diffTiming[side].add(micros(packBegin.QuadPart-diffBegin.QuadPart));
+                if (!changed)
+                {
+                    ++identical[side];
+                    cadence[side].advance(static_cast<uint64_t>(packBegin.QuadPart));
                     continue;
+                }
+                const auto bounds = snapshot->rect;
+                bool encoded = true;
+                for (size_t i = 0; i < regions.size(); ++i)
+                {
+                    snapshot->rect = regions[i];
+                    encoded = screenframes::packet(*snapshot, packets[i]) && encoded;
+                    outputPixels[side] += static_cast<ULONGLONG>(regions[i].w)*regions[i].h;
+                }
+                snapshot->rect = bounds;
+                if (!encoded) continue;
+                QueryPerformanceCounter(&packEnd);
+                packTiming[side].add(micros(packEnd.QuadPart-packBegin.QuadPart));
                 DWORD written = 0, error = 0;
                 bool ok = false, attempted = false;
                 LARGE_INTEGER sendBegin{}, sendEnd{};
@@ -374,15 +478,25 @@ class Pump
                     {
                         attempted = true;
                         QueryPerformanceCounter(&sendBegin);
-                        ok = WriteFile(job->pipe, data.data(), static_cast<DWORD>(data.size()), &written, nullptr) &&
-                             written == data.size();
-                        if (!ok)
-                            error = GetLastError();
+                        ok = true;
+                        for (size_t i = 0; i < regions.size(); ++i)
+                        {
+                            if (!job->live.load() || job->fault.load() || WaitForSingleObject(stopEvent,0) == WAIT_OBJECT_0)
+                            { ok = false; error = ERROR_OPERATION_ABORTED; break; }
+                            DWORD count = 0;
+                            const auto &data = packets[i];
+                            if (!WriteFile(job->pipe, data.data(), static_cast<DWORD>(data.size()), &count, nullptr))
+                            { ok = false; error = GetLastError(); break; }
+                            if (count != data.size()) { ok = false; error = ERROR_WRITE_FAULT; break; }
+                            written += count;
+                            ++packetCount[side];
+                        }
                         QueryPerformanceCounter(&sendEnd);
                     }
                 }
                 if (attempted && ok)
                 {
+                    (*delta)[side].commit(*snapshot);
                     ++sent;
                     bytes += written;
                     ++sideSent[side];

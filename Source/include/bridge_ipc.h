@@ -13,7 +13,7 @@
 
 namespace phase18
 {
-constexpr DWORD Magic = 0x53345048, Version = 9;
+constexpr DWORD Magic = 0x53345048, Version = 10;
 
 enum State : DWORD
 {
@@ -61,7 +61,8 @@ enum Fact : DWORD
     NearEnd = 8,
     TT = 16,
     Playing = 32,
-    Touched = 64
+    Touched = 64,
+    Reverse = 128
 };
 enum class Action
 {
@@ -75,8 +76,8 @@ inline bool envelope(const Frame &a, const Frame &b, DWORD pid, ULONGLONG create
 {
     return !memcmp(&a, &b, sizeof(a)) && !(a.sequence & 1) && a.magic == Magic && a.version == Version &&
            a.pid == pid && a.created == created && a.speedMode <= 3 && (a.padding & 3u) <= 2 && !(a.padding & ~63u) &&
-           a.ticks <= 2 && a.tension <= 255 && a.state <= Stopping && !(a.valid & ~3u) && !(a.facts[0] & ~127u) &&
-           !(a.facts[1] & ~127u) && a.rgb[0] <= 0xffffff && a.rgb[1] <= 0xffffff && a.deck[0] <= 4 && a.deck[1] <= 4 &&
+           a.ticks <= 2 && a.tension <= 255 && a.state <= Stopping && !(a.valid & ~3u) && !(a.facts[0] & ~255u) &&
+           !(a.facts[1] & ~255u) && a.rgb[0] <= 0xffffff && a.rgb[1] <= 0xffffff && a.deck[0] <= 4 && a.deck[1] <= 4 &&
            (!(a.valid & 1) || a.deck[0] >= 1) && (!(a.valid & 2) || a.deck[1] >= 1);
 }
 

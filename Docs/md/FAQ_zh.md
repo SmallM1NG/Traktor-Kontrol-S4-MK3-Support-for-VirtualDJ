@@ -1,6 +1,6 @@
 # FAQ ❓
 
-中文 · [English](FAQ.md) · [项目说明](../../README_zh.md)
+中文 · [English](FAQ.md)
 
 **1.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">原理是什么？</b>
 
@@ -8,7 +8,7 @@
 
 **2.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">支持哪些版本？</b>
 
-&emsp;**A:** 仅支持 Windows x64 的 VirtualDJ 2021 及以上版本，需拥有 VirtualDJ Pro 许可证，并安装 NI 官方驱动及 NIHardwareService。本项目基于 VirtualDJ 9005 开发，仅在 9005 / 9644 下测试过，不保证全部功能在任意版本中都能正常使用。
+&emsp;**A:** 仅支持 Windows x64 的 VirtualDJ 2021 及以上版本，需拥有 VirtualDJ Pro 许可证，并安装 NI 官方驱动及 NIHardwareService。本项目基于 VirtualDJ 9005 开发，仅在 9005 / 9644 下测试过，不保证全部功能在任意版本中都能正常使用。具体请查看[支持版本](SUPPORTED_VERSIONS_zh.md)。
 
 **3.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">为什么需要管理员权限？</b>
 
@@ -28,7 +28,7 @@
 
 **7.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">弹出功能不可用的报错框？</b>
 
-&emsp;**A:** 这表示对应功能所需的内部位置或设备对象未通过校验，相关自定义功能已被禁用。VirtualDJ 或 NIHardwareService 的版本变化可能导致这种情况，不代表所有功能都无法使用。请提交 issue。
+&emsp;**A:** 这表示对应功能所需的内部位置或设备对象未通过校验，相关自定义功能已被禁用。VirtualDJ 或 NIHardwareService 的版本变化可能导致这种情况，不代表所有功能都无法使用。请[提交 Issue](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/issues)。
 
 **8.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">配套 EXE 无法启动，而且没有出现 UAC 提示？</b>
 

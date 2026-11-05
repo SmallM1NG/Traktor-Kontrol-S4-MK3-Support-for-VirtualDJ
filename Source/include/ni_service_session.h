@@ -2,6 +2,7 @@
 // EN: NI service session coordination: device objects, command workers, motor policy, haptic/ring lanes and independent shutdown watchdog.
 #pragma once
 #include <windows.h>
+#include "process_exit_guard.h"
 
 struct BH
 {
@@ -384,6 +385,7 @@ inline bool disconnected(DWORD error)
 #include "haptic_cue.h"
 #include <cfloat>
 #include "ni_service_compatibility.h"
+#include "ni_cleanup_connection.h"
 
 namespace ni24
 {
@@ -434,6 +436,8 @@ inline std::array<Target, 2> targets(const phase18::Frame &a, const phase18::Fra
         if (out[i].rpm <= 0)
             continue;
         out[i].mode = (f & phase18::TT) ? 2 : 1;
+        if (out[i].mode == 2 && (f & phase18::Reverse))
+            out[i].rpm = -out[i].rpm;
         out[i].moving =
             (f & phase18::Playing) != 0 &&
             !(a.padding &
@@ -452,7 +456,7 @@ struct Controller
     template <class Send> bool update(unsigned i, const Target &requested, Send send)
     {
         Target next = requested;
-        if (next.mode == 2 && (!std::isfinite(next.rpm) || next.rpm <= 0 || next.rpm > 75.0f))
+        if (next.mode == 2 && (!std::isfinite(next.rpm) || next.rpm == 0 || std::abs(next.rpm) > 75.0f))
         {
             next.mode = 1;
             next.moving = false;
@@ -481,13 +485,16 @@ struct Controller
                 return false;
             if (!write(Mode, i, next.mode))
                 return false;
-            if (next.mode == 2 || !known[i])
+            if (next.mode == 2 || !known[i] || old.rpm < 0)
             {
                 float rpm =
                     next.mode == 1 && (!std::isfinite(next.rpm) || next.rpm <= 0 || next.rpm > 75) ? 45.0f : next.rpm;
                 DWORD bits = 0;
                 memcpy(&bits, &rpm, 4);
-                if (!write(BaseSpeed, i, bits) || !write(Speed, i, bits))
+                float base = std::abs(rpm);
+                DWORD baseBits = 0;
+                memcpy(&baseBits, &base, 4);
+                if (!write(BaseSpeed, i, baseBits) || !write(Speed, i, bits))
                     return false;
             }
             if (!preserveMotion && next.moving && !write(Motion, i, True))
@@ -499,7 +506,17 @@ struct Controller
         {
             DWORD bits = 0;
             memcpy(&bits, &next.rpm, 4);
-            if (!write(BaseSpeed, i, bits) || !write(Speed, i, bits))
+            // ZH: 基准速度始终为正；只改变方向时仅发送 Speed，保留 NI 的运动状态。
+            // EN: Keep BaseSpeed positive; direction-only changes send Speed without resetting Motion.
+            if (std::abs(next.rpm) != std::abs(old.rpm))
+            {
+                float base = std::abs(next.rpm);
+                DWORD baseBits = 0;
+                memcpy(&baseBits, &base, 4);
+                if (!write(BaseSpeed, i, baseBits))
+                    return false;
+            }
+            if (!write(Speed, i, bits))
                 return false;
         }
         old = next;
@@ -556,7 +573,7 @@ inline DWORD WINAPI writer(void *raw)
     return 0;
 }
 
-inline bool send(HANDLE pipe, DWORD op, DWORD side, DWORD value)
+inline bool send(HANDLE pipe, DWORD op, DWORD side, DWORD value, DWORD timeoutMs = 200)
 {
     if (op == RingMode)
     {
@@ -576,7 +593,7 @@ inline bool send(HANDLE pipe, DWORD op, DWORD side, DWORD value)
     HANDLE thread = CreateThread(nullptr, 0, writer, &p, 0, nullptr);
     if (!thread)
         return false;
-    DWORD waited = WaitForSingleObject(thread, 200);
+    DWORD waited = WaitForSingleObject(thread, timeoutMs);
     if (waited != WAIT_OBJECT_0)
     {
         CancelSynchronousIo(thread);
@@ -597,6 +614,8 @@ struct Shared
     uintptr_t server = 0, device = 0, vt = 0;
     BYTE focus[24]{};
     nicompat::Layout layout{};
+    char serial[256]{}; // Captured from NI online-device notifications before normal control starts.
+    volatile LONG64 cleanupDeadline = 0;
     volatile LONG64 tick = 0;
     volatile LONG state =
         0; // ZH: 0 表示准备，1 表示活动，2 表示请求停止。 | EN: 0 preparing, 1 active, 2 stop requested
@@ -622,8 +641,122 @@ template <class T> bool remote(HANDLE h, uintptr_t at, T &v)
     return ReadProcessMemory(h, reinterpret_cast<void *>(at), &v, sizeof(v), &n) && n == sizeof(v);
 }
 
+template<class Command, class Packet> bool stopOutputs(Command command, Packet packet)
+{
+    bool ok = true;
+    for (DWORD i = 0; i < 2; ++i)
+        if (!command(Motion, i, 0)) ok = false;
+    for (DWORD i = 0; i < 2; ++i)
+        if (!command(RingMode, i, 0)) ok = false;
+    for (unsigned i = 0; i < 2; ++i)
+    {
+        hc90::Side empty;
+        // Try every cleanup packet even if an earlier write failed.
+        if (!packet(hc90::gatePacket(i, false))) ok = false;
+        if (!packet(hc90::listPacket(i, empty))) ok = false;
+        if (!packet(hc90::positionPacket(i, 0))) ok = false;
+    }
+    for (DWORD i = 0; i < 2; ++i)
+        if (!command(Mode, i, 1)) ok = false;
+    return ok;
+}
+
+inline bool cleanupOwner(const BYTE (&current)[24], const BYTE (&previous)[24])
+{
+    DWORD owner = 0, role = 0;
+    memcpy(&owner, current + 8, 4); memcpy(&role, current + 16, 4);
+    return !memcmp(current, previous, 24) || (owner == 0x53727663 && role == 0x536c6570);
+}
+
+// ZH: 原 VDJ 会话已失效时，仅对同一 NI 设备、原归属或服务默认归属建立一次清理会话。
+// EN: Recover a lost VDJ session only for the same NI device under the original or default service owner.
+inline bool reconnectCleanup(HANDLE ni, const Shared &s, FILE *telemetry, ULONGLONG deadline = 0)
+{
+    if (!deadline) deadline=GetTickCount64()+nicleanup::timing::CleanupMs;
+    BYTE ownedFocus[24]{};
+    bool claimed = false;
+    auto sameDevice = [&] {
+        uintptr_t vt = 0, device = 0;
+        return WaitForSingleObject(ni, 0) == WAIT_TIMEOUT && remote(ni, s.server, vt) && vt == s.vt &&
+               remote(ni, s.server + s.layout.serverDevice, device) && device == s.device;
+    };
+    auto allowed = [&](unsigned phase) {
+        BYTE focus[24]{};
+        if (GetTickCount64()>=deadline || !sameDevice() || !remote(ni, s.server + s.layout.focus, focus)) return false;
+        if (phase == 0) return cleanupOwner(focus, s.focus);
+        if (phase == 1 && !claimed && cleanupOwner(focus, s.focus)) return true;
+        if (claimed) return !memcmp(focus, ownedFocus, 24);
+        DWORD owner = 0, role = 0;
+        memcpy(&owner, focus + 8, 4); memcpy(&role, focus + 16, 4);
+        if (owner != 0x4e694d32 || role != 0x70726d79 || !memcmp(focus, s.focus, 24)) return false;
+        memcpy(ownedFocus, focus, 24); claimed = true;
+        return true;
+    };
+    if (!allowed(0))
+    {
+        runtimediag::event(telemetry, "EXE.watchdog", "WARN", "cleanup_reconnect_skipped",
+                           "reason=device_or_owner_changed");
+        return false;
+    }
+    std::string serial;
+    if (!nicleanup::serialText(reinterpret_cast<const BYTE *>(s.serial),
+                             strnlen_s(s.serial, sizeof(s.serial)) + 1, serial))
+    {
+        runtimediag::event(telemetry, "EXE.watchdog", "ERROR", "cleanup_reconnect_skipped",
+                           "reason=session_serial_missing_or_invalid");
+        return false;
+    }
+    nicleanup::Connection connection;
+    if (!connection.connect(serial, s.service, allowed, L"NIHWMainHandler", false, deadline))
+    {
+        runtimediag::event(telemetry, "EXE.watchdog", "ERROR", "cleanup_reconnect_failed",
+                           "stage=%s win_error=%lu", connection.stage(), GetLastError());
+        return false;
+    }
+    auto packet = [&](const hc90::Packet &p) {
+        DWORD op = 0, side = 0;
+        if (p.bytes.size() >= 8) { memcpy(&op, p.bytes.data(), 4); memcpy(&side, p.bytes.data() + 4, 4); }
+        const bool owned = allowed(2);
+        bool ok = owned && connection.send(p.bytes.data(), p.bytes.size());
+        if (!owned) SetLastError(ERROR_ACCESS_DENIED);
+        if (!ok) runtimediag::event(telemetry, "EXE.watchdog", "ERROR", "cleanup_command_failed",
+                                   "route=reconnected side=%lu opcode=0x%08lX win_error=%lu", side, op, GetLastError());
+        return ok;
+    };
+    bool commands = stopOutputs([&](DWORD op, DWORD side, DWORD value) {
+        DWORD words[] = {op, side, value};
+        const bool owned = allowed(2);
+        bool ok = owned && connection.send(words, sizeof(words));
+        if (!owned) SetLastError(ERROR_ACCESS_DENIED);
+        if (!ok) runtimediag::event(telemetry, "EXE.watchdog", "ERROR", "cleanup_command_failed",
+                                   "route=reconnected side=%lu opcode=0x%08lX win_error=%lu", side, op, GetLastError());
+        return ok;
+    }, packet);
+    bool off = false;
+    const auto verifyEnd=(std::min)(deadline,GetTickCount64()+nicleanup::timing::VerifyMs);
+    while (GetTickCount64()<verifyEnd && allowed(2))
+    {
+        off = true;
+        for (unsigned side = 0; side < 2; ++side)
+        {
+            BYTE motion = 1; ring18::Cache cache{};
+            if (!remote(ni, s.device + s.layout.deviceJog + s.layout.motion[side], motion) || motion ||
+                !nicompat::cacheRead(ni, s.device + s.layout.deviceJog, s.layout, side, cache) || cache.mode != 0)
+                off = false;
+        }
+        if (off) break;
+        Sleep(nicleanup::timing::remaining(verifyEnd,nicleanup::timing::PollMs));
+    }
+    runtimediag::event(telemetry, "EXE.watchdog", commands && off ? "INFO" : "ERROR", "cleanup_reconnect_result",
+                       "commands_ok=%u outputs_off=%u", commands ? 1u : 0u, off ? 1u : 0u);
+    return commands && off;
+}
+
 inline int watchdog(HANDLE pipe, HANDLE mapping, HANDLE ready, FILE *telemetry = nullptr)
 {
+    BH cleanupTrigger(CreateEventW(nullptr, TRUE, FALSE, nullptr));
+    shutdownlimit::Guard exitGuard;
+    if (!cleanupTrigger.h || !exitGuard.start(cleanupTrigger.h, nullptr, shutdownlimit::CleanupMs)) return 4;
     auto s = static_cast<Shared *>(MapViewOfFile(mapping, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, sizeof(Shared)));
     if (!s)
     {
@@ -655,6 +788,7 @@ inline int watchdog(HANDLE pipe, HANDLE mapping, HANDLE ready, FILE *telemetry =
                remote(ni.h, s->server + s->layout.focus, focus) && !memcmp(focus, s->focus, 24);
     };
     int result = 4;
+    ULONGLONG cleanupEnd=0;
     if (valid && identity())
     {
         runtimediag::event(telemetry, "EXE.watchdog", "INFO", "ready", "helper_pid=%lu ni_pid=%lu", s->parent,
@@ -677,51 +811,54 @@ inline int watchdog(HANDLE pipe, HANDLE mapping, HANDLE ready, FILE *telemetry =
                            : tick > now ? "future_heartbeat"
                                         : "heartbeat_expired",
                            state, now >= tick ? now - tick : 0);
+        const auto localEnd=GetTickCount64()+nicleanup::timing::CleanupMs;
+        SetEvent(cleanupTrigger.h);
+        const auto requestedEnd=static_cast<ULONGLONG>(InterlockedCompareExchange64(&s->cleanupDeadline,static_cast<LONG64>(localEnd),0));
+        cleanupEnd=requestedEnd ? (std::min)(requestedEnd,localEnd) : localEnd;
         InterlockedExchange(&s->state, 2);
         if (identity())
         {
-            bool ok = true;
-            // ZH: 先停止电机并明确熄灭灯环，再执行较慢的触觉清理。
-            // EN: Stop motion first, then explicitly extinguish rings before slower haptic cleanup.
-            for (DWORD i = 0; i < 2; ++i)
-            {
-                if (!identity() || !send(pipe, Motion, i, 0))
-                    ok = false;
-            }
-            for (DWORD i = 0; i < 2; ++i)
-            {
-                if (!identity() || !send(pipe, RingMode, i, 0))
-                    ok = false;
-            }
-            for (unsigned i = 0; i < 2; ++i)
-            {
-                hc90::Side empty;
-                if (!identity() || !hc90::send(pipe, hc90::gatePacket(i, false)) ||
-                    !hc90::send(pipe, hc90::listPacket(i, empty)) || !hc90::send(pipe, hc90::positionPacket(i, 0)))
-                    ok = false;
-            }
-            // ZH: 回读运动状态字节，发出停止请求后才恢复中性 JOG 模式。
-            // EN: Read back the motion bytes. Restore neutral JOG mode only after requesting stop.
-            for (DWORD i = 0; i < 2; ++i)
-            {
-                if (!identity() || !send(pipe, Mode, i, 1))
-                    ok = false;
-            }
+            const auto originalEnd=(std::min)(cleanupEnd,GetTickCount64()+nicleanup::timing::OriginalMs);
+            bool usable=true;
+            auto command = [&](DWORD op, DWORD side, DWORD value) {
+                const bool owned = usable && identity();
+                const auto wait=nicleanup::timing::remaining(originalEnd,nicleanup::timing::IoMs);
+                bool ok = owned && wait && send(pipe, op, side, value, wait);
+                if (!owned || !wait || (!ok && (controlwork::disconnected(GetLastError()) || GetLastError()==ERROR_TIMEOUT))) usable=false;
+                if (!ok) runtimediag::event(telemetry, "EXE.watchdog", "ERROR", "cleanup_command_failed",
+                    "route=original side=%lu opcode=0x%08lX win_error=%lu identity_ok=%u", side, op,
+                    owned ? GetLastError() : ERROR_ACCESS_DENIED, owned ? 1u : 0u);
+                return ok;
+            };
+            auto packet = [&](const hc90::Packet &p) {
+                DWORD op = 0, side = 0;
+                if (p.bytes.size() >= 8) { memcpy(&op, p.bytes.data(), 4); memcpy(&side, p.bytes.data() + 4, 4); }
+                const bool owned = usable && identity();
+                const auto wait=nicleanup::timing::remaining(originalEnd,nicleanup::timing::IoMs);
+                bool ok = owned && wait && hc90::send(pipe, p, wait);
+                if (!owned || !wait || (!ok && (controlwork::disconnected(GetLastError()) || GetLastError()==ERROR_TIMEOUT))) usable=false;
+                if (!ok) runtimediag::event(telemetry, "EXE.watchdog", "ERROR", "cleanup_command_failed",
+                    "route=original side=%lu opcode=0x%08lX win_error=%lu identity_ok=%u", side, op,
+                    owned ? GetLastError() : ERROR_ACCESS_DENIED, owned ? 1u : 0u);
+                return ok;
+            };
+            bool ok = stopOutputs(command, packet);
             bool off = false;
-            for (unsigned retry = 0; retry < 10; ++retry)
+            const auto verifyEnd=(std::min)(originalEnd,GetTickCount64()+nicleanup::timing::VerifyMs);
+            while (ok && usable && GetTickCount64()<verifyEnd)
             {
                 BYTE left = 1, right = 1;
                 off = identity() && remote(ni.h, s->device + s->layout.deviceJog + s->layout.motion[0], left) &&
                       remote(ni.h, s->device + s->layout.deviceJog + s->layout.motion[1], right) && !left && !right;
-                if (off)
+                if (off || !identity())
                     break;
-                Sleep(20);
+                Sleep(nicleanup::timing::remaining(verifyEnd,nicleanup::timing::PollMs));
             }
             // ZH: 退出流程决定灯环最终状态，禁止恢复点亮的缓存。
             // EN: Shutdown owns the final ring state; never restore an illuminated cache.
             DWORD scale = 0;
             bool ringsOff =
-                identity() && remote(ni.h, s->device + s->layout.deviceJog + s->layout.scale, scale) && scale == 2880;
+                ok && usable && GetTickCount64()<originalEnd && identity() && remote(ni.h, s->device + s->layout.deviceJog + s->layout.scale, scale) && scale == 2880;
             for (unsigned i = 0; i < 2; ++i)
             {
                 ring18::Cache before{}, after{};
@@ -747,8 +884,17 @@ inline int watchdog(HANDLE pipe, HANDLE mapping, HANDLE ready, FILE *telemetry =
             result =
                 6; // ZH: 不得向替换后的设备或焦点所有者发送。 | EN: Never send to a replacement device/focus owner.
     }
+#ifndef NI24_WATCHDOG_TEST
+    if (valid && (result == 5 || result == 6))
+    {
+        runtimediag::event(telemetry, "EXE.watchdog", "WARN", "cleanup_reconnect_begin", "original_result=%d", result);
+        if (reconnectCleanup(ni.h, *s, telemetry, cleanupEnd)) result = 0;
+    }
+#endif
     if (result == 4 || result == 6)
         runtimediag::event(telemetry, "EXE.watchdog", "WARN", "identity_rejected_no_output", "result=%d", result);
+    if (cleanupEnd) runtimediag::event(telemetry,"EXE.watchdog",result ? "ERROR" : "INFO","cleanup_timing",
+        "remaining_ms=%lu result=%d",nicleanup::timing::remaining(cleanupEnd,nicleanup::timing::CleanupMs),result);
     UnmapViewOfFile(s);
     CloseHandle(pipe);
     CloseHandle(mapping);
@@ -782,6 +928,8 @@ class Watch
 {
     BH mapping, ready, process;
     Shared *shared = nullptr;
+    bool finished=false;
+    DWORD finishResult=4;
 
   public:
     Watch() = default;
@@ -789,7 +937,7 @@ class Watch
     Watch &operator=(const Watch &) = delete;
 
     bool start(HANDLE pipe, DWORD service, uintptr_t server, uintptr_t device, uintptr_t vt, const BYTE *focus,
-               const nicompat::Layout &layout)
+               const nicompat::Layout &layout, const std::string &serial = {})
     {
         SECURITY_ATTRIBUTES sa{sizeof(sa), nullptr, TRUE};
         mapping.h = CreateFileMappingW(INVALID_HANDLE_VALUE, &sa, PAGE_READWRITE, 0, sizeof(Shared), nullptr);
@@ -807,6 +955,7 @@ class Watch
         shared->device = device;
         shared->vt = vt;
         shared->layout = layout;
+        if (serial.size() < sizeof(shared->serial)) memcpy(shared->serial, serial.c_str(), serial.size() + 1);
         memcpy(shared->focus, focus, 24);
         beat();
         BH inherited;
@@ -867,15 +1016,23 @@ class Watch
 
     DWORD finish()
     {
-        if (!process.h)
-            return 4;
-        if (shared)
+        if (finished) return finishResult;
+        finished=true;
+        if (!process.h) return finishResult;
+        const auto localEnd=GetTickCount64()+nicleanup::timing::CleanupMs;
+        ULONGLONG until=localEnd;
+        if (shared) {
+            const auto existing=static_cast<ULONGLONG>(InterlockedCompareExchange64(&shared->cleanupDeadline,static_cast<LONG64>(localEnd),0));
+            if (existing) until=(std::min)(until,existing);
             InterlockedExchange(&shared->state, 2);
-        if (WaitForSingleObject(process.h, 3000) != WAIT_OBJECT_0)
-            return 7;
-        DWORD code = 4;
-        GetExitCodeProcess(process.h, &code);
-        return code;
+        }
+        const auto waited=WaitForSingleObject(process.h,nicleanup::timing::remaining(until+nicleanup::timing::ExitGraceMs,nicleanup::timing::CleanupMs+nicleanup::timing::ExitGraceMs));
+        if (waited != WAIT_OBJECT_0) {
+            TerminateProcess(process.h, ERROR_TIMEOUT);
+            return finishResult=7;
+        }
+        DWORD code=4; GetExitCodeProcess(process.h,&code);
+        return finishResult=code;
     }
 
     ~Watch()
@@ -1238,7 +1395,25 @@ class BridgeSession
             }
             return true;
         };
-        if (apply && !motorWatch.start(pipe.h, ss.dwProcessId, server, device, vt, focus, layout))
+        std::string cleanupSerial;
+        if (apply)
+        {
+            nicleanup::Connection discovery;
+            auto sameSession = [&](unsigned) {
+                uintptr_t currentVtable = 0, currentDevice = 0;
+                BYTE currentFocus[24]{};
+                return !stopped() && WaitForSingleObject(ni.h, 0) == WAIT_TIMEOUT &&
+                       read(ni.h, server, currentVtable) && currentVtable == vt &&
+                       read(ni.h, server + layout.serverDevice, currentDevice) && currentDevice == device &&
+                       bytes(ni.h, server + layout.focus, currentFocus, sizeof(currentFocus)) &&
+                       !memcmp(currentFocus, focus, sizeof(focus));
+            };
+            bool captured = discovery.discoverSerial(ss.dwProcessId, sameSession, cleanupSerial);
+            runtimediag::event(telemetry, "EXE.session", captured ? "INFO" : "WARN", "cleanup_serial_capture",
+                               "captured=%u stage=%s win_error=%lu", captured ? 1u : 0u,
+                               discovery.stage(), captured ? 0ul : GetLastError());
+        }
+        if (apply && !motorWatch.start(pipe.h, ss.dwProcessId, server, device, vt, focus, layout, cleanupSerial))
         {
             note("ni_motor_watchdog_start_failed");
             nicompat::warn(telemetry, {0, "NI_watchdog_validation_or_start"});

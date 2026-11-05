@@ -18,7 +18,7 @@
 
 输出目录为 `Source/artifacts/x64/Release/`，DLL 和 EXE 放在一起。生成不会自动安装，也不启动 VDJ 或助手。DLL 工程不能像普通 EXE 那样直接按 F5 运行。
 
-Bridge 引用 NI Service Helper 工程：先生成 EXE，再计算 SHA-256，最后构建绑定该摘要的 DLL。两个 `.vcxproj` 内直接定义版本 v0.1.0、编译选项和输出目录，并使用 MSBuild 内联 C# 任务自动生成 release_identity.h、release_digest.h 和 DLL 导出定义，无需 Python 或外部构建脚本。生成内容不变时不重写文件，保留增量编译能力。
+Bridge 引用 NI Service Helper 工程：先生成 EXE，再计算 SHA-256，最后构建绑定该摘要的 DLL。两个 `.vcxproj` 内直接定义版本 v0.1.1、编译选项和输出目录，并使用 MSBuild 内联 C# 任务自动生成 release_identity.h、release_digest.h 和 DLL 导出定义，无需 Python 或外部构建脚本。生成内容不变时不重写文件，保留增量编译能力。
 
 ### 命令行
 
@@ -28,7 +28,7 @@ Bridge 引用 NI Service Helper 工程：先生成 EXE，再计算 SHA-256，最
 msbuild "Source/Traktor Kontrol S4 MK3.slnx" /m /t:Build /p:Configuration=Release /p:Platform=x64
 ```
 
-需要修改版本时，在两个 `.vcxproj` 中设置 `S4Version`，或通过 `/p:S4Version=v0.1.0` 显式传入。版本必须采用 `vMAJOR.MINOR.PATCH`；两个工程必须使用同一个值。EXE 改变后应重新生成 Bridge，以更新摘要绑定。
+需要修改版本时，在两个 `.vcxproj` 中设置 `S4Version`，或通过 `/p:S4Version=v0.1.1` 显式传入。版本必须采用 `vMAJOR.MINOR.PATCH`；两个工程必须使用同一个值。EXE 改变后应重新生成 Bridge，以更新摘要绑定。
 
 ## 源码结构
 
@@ -112,7 +112,7 @@ flowchart TB
 | 状态采集 | DLL 以 10ms / 100Hz 为目标采样 SDK；实体角度从原生输入回调获取，不额外读取 USB。 |
 | 进程间传递 | 共享快照携带序列号、会话身份、连接代次和时间戳；数据更新后通过事件唤醒消费线程。 |
 | 硬件输出 | EXE 使用已有 NI 管道和经验证的服务缓存；普通命令串行发送，电机优先。 |
-| 灯环相位 | Physical Jog 在 TT 关闭时组合播放相位与手动位移，触摸、暂停和 CUE 试听时停止累加自动相位；TT 开启时直接跟随实体角度。Absolute Position 跟随软件指针位置。 |
+| 灯环相位 | Traktor Style 按 TTModeBaseSpeed 和 Tempo 计算播放时的自动旋转；触摸时跟随手动位移，松手后恢复自动旋转，TT 与 TTModeReverse 均开启时，自动旋转跟随反转 / Dump，否则保持正转。暂停与 CUE 试听停止自动旋转。Pointer Position 跟随软件指针。 |
 
 接管改变的是像素发送路径，屏幕内容仍由 VirtualDJ 绘制。后台队列保留最新画面并合并更新区域，每侧约 60Hz 为软件调度目标。
 
@@ -132,7 +132,7 @@ flowchart TB
 
 | 日志文件 | 主要内容 |
 | --- | --- |
-| `Traktor-Kontrol-S4-MK3-Bridge-v0.1.0.log` | DLL 加载、VirtualDJ 兼容性检查、设备连接、助手启动及屏幕输出 |
-| `Traktor-Kontrol-S4-MK3-NI-Service-Helper-v0.1.0.log` | NI 服务连接、电机、灯环和触觉控制，以及异常退出后的清理结果 |
+| `Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log` | DLL 加载、VirtualDJ 兼容性检查、设备连接、助手启动及屏幕输出 |
+| `Traktor-Kontrol-S4-MK3-NI-Service-Helper-v0.1.1.log` | NI 服务连接、电机、灯环和触觉控制，以及异常退出后的清理结果 |
 
 日志超过 10 MB 时会自动清理上一次会话的内容，汇报问题时请附上日志。

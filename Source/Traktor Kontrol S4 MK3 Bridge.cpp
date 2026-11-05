@@ -14,6 +14,7 @@
 #include <initializer_list>
 #include <cstddef>
 #include "deck_sampler.h"
+#include "process_exit_guard.h"
 
 #include "bridge_ipc.h"
 #include "startup_input.h"
@@ -33,6 +34,7 @@
 class RingProbe final : public IVdjPlugin8
 {
     HANDLE stop = nullptr, worker = nullptr;
+    HMODULE workerModule = nullptr;
     bool helperRequested = false;
     std::wstring logPath;
     const char *connectionReason = "not_checked";
@@ -91,11 +93,11 @@ class RingProbe final : public IVdjPlugin8
         next.pipe = reinterpret_cast<ULONGLONG>(pipe);
         char ringText[128]{};
         next.padding = 0;
-        if (cb && GetStringInfo("setting 'TRAKTORS4MK3-JogLEDMode'", ringText, sizeof(ringText)) == S_OK)
+        if (cb && GetStringInfo("setting 'TRAKTORS4MK3-JogLEDRingMode'", ringText, sizeof(ringText)) == S_OK)
         {
             ringText[127] = 0;
             next.padding =
-                (!strcmp(ringText, "Physical Jog") || !strcmp(ringText, "33.3 RPM") || !strcmp(ringText, "45 RPM"))
+                (!strcmp(ringText, "Traktor Style") || !strcmp(ringText, "33.3 RPM") || !strcmp(ringText, "45 RPM"))
                     ? 1u
                     : 0u;
         }
@@ -106,7 +108,7 @@ class RingProbe final : public IVdjPlugin8
             {
                 runtimediag::event(file, "DLL.ring", "INFO", "jog_led_policy",
                                    "mode=%s manual_source=hid_report_3 absolute_source=vdj_get_rotation",
-                                   next.padding ? "physical_jog_hybrid" : "absolute_position");
+                                   next.padding ? "traktor_style" : "pointer_position");
                 fclose(file);
             }
             lastRingMode = next.padding;
@@ -114,12 +116,12 @@ class RingProbe final : public IVdjPlugin8
         }
         char speedText[128]{};
         next.speedMode = 0;
-        if (cb && GetStringInfo("setting 'TRAKTORS4MK3-TTTurntableSpeed'", speedText, sizeof(speedText)) == S_OK)
+        if (cb && GetStringInfo("setting 'TRAKTORS4MK3-TTModeBaseSpeed'", speedText, sizeof(speedText)) == S_OK)
         {
             speedText[127] = 0;
             next.speedMode = !strcmp(speedText, "33.3 RPM")                 ? 1
                              : !strcmp(speedText, "45 RPM")                 ? 2
-                             : !strcmp(speedText, "BPM / 4 (Experimental)") ? 3
+                             : (!strcmp(speedText, "BPM / 4") || !strcmp(speedText, "BPM / 4 (Experimental)")) ? 3
                                                                             : 0;
         }
         if (next.speedMode != lastSpeedMode)
@@ -127,6 +129,9 @@ class RingProbe final : public IVdjPlugin8
             log("tt_speed_setting_mode", next.speedMode);
             lastSpeedMode = next.speedMode;
         }
+        double reverseValue = 0;
+        const bool followReverse = cb &&
+            GetInfo("setting 'TRAKTORS4MK3-TTModeReverse'", &reverseValue) == S_OK && reverseValue == 1;
         char ticksText[64]{}, tensionText[64]{};
         if (cb && GetStringInfo("setting 'TRAKTORS4MK3-TicksWhenNudging'", ticksText, sizeof(ticksText)) == S_OK)
         {
@@ -153,7 +158,7 @@ class RingProbe final : public IVdjPlugin8
                     bool ok = deckColor(deck, value);
                     rgb = value;
                     return ok;
-                });
+                }, followReverse);
             double cuePreview = 0;
             std::string cueQuery = "deck " + std::to_string(value.deck) + " var 's4mk3_cue_preview'";
             if (value.valid && cb && GetInfo(cueQuery.c_str(), &cuePreview) == S_OK && cuePreview == 1)
@@ -433,11 +438,10 @@ class RingProbe final : public IVdjPlugin8
 
     void screenOutputSetting(ULONG_PTR owner = 0, HANDLE pipe = nullptr)
     {
-        char value[32]{};
-        // ZH: 设置不可读取时使用 ON。
-        // EN: Use ON when the setting is unavailable.
-        bool on = !(cb && GetStringInfo("setting 'TRAKTORS4MK3-ScreenOutputTakeover'", value, sizeof(value)) == S_OK &&
-                    !strcmp(value, "OFF"));
+        double value = 1;
+        // ZH: 开关按数值 1/0 读取；设置不可读取或数值无效时保持默认开启。
+        // EN: Read the toggle as numeric 1/0; default to enabled when unavailable or invalid.
+        bool on = !(cb && GetInfo("setting 'TRAKTORS4MK3-ScreenOutputTakeover'", &value) == S_OK && value == 0);
         if (screenasync::setTakeover(on, owner, pipe))
             log(on ? "screen_output_takeover_on" : "screen_output_takeover_off_native");
     }
@@ -483,7 +487,7 @@ class RingProbe final : public IVdjPlugin8
             if (!initial23::start(logPath))
                 vdjcompat::warning(
                     2, logPath, "initial_input",
-                    L"The HID input entry could not be located or enabled safely. Cold-start input synchronization and physical Jog angle sampling are disabled. Absolute Position ring mode and other independent features remain available. See the Bridge log.");
+                    L"The HID input entry could not be located or enabled safely. Cold-start input synchronization and physical Jog angle sampling are disabled. Pointer Position ring mode and other independent features remain available. See the Bridge log.");
             if (!hardwareSupported || !screenasync::start(logPath))
                 vdjcompat::warning(
                     4, logPath, "screen_takeover",
@@ -674,6 +678,12 @@ class RingProbe final : public IVdjPlugin8
             log("data_notification_create_failed_fallback", GetLastError());
         else
             log("data_notifications_ready");
+        if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+                                reinterpret_cast<LPCWSTR>(&run), &workerModule))
+        {
+            log("publisher_module_reference_failed", GetLastError());
+            return E_FAIL;
+        }
         worker = CreateThread(nullptr, 0, run, this, 0, nullptr);
         if (!worker)
         {
@@ -714,7 +724,13 @@ class RingProbe final : public IVdjPlugin8
             SetEvent(stop);
         if (worker)
         {
-            WaitForSingleObject(worker, INFINITE);
+            if (WaitForSingleObject(worker, shutdownlimit::PublisherMs) != WAIT_OBJECT_0)
+            {
+                // ZH: 不强杀宿主线程；保留工作线程可能使用的对象和模块直到进程退出。
+                // EN: Never kill a host thread; retain its object and module until process exit.
+                OutputDebugStringA("S4MK3 publisher shutdown timeout; module and worker storage retained.\n");
+                return 0;
+            }
             CloseHandle(worker);
         }
         if (stop)
@@ -729,6 +745,8 @@ class RingProbe final : public IVdjPlugin8
         if (phaseChanged)
             CloseHandle(phaseChanged);
         log("plugin_release_complete");
+        if (workerModule)
+            FreeLibrary(workerModule);
         delete this;
         return 0;
     }

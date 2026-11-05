@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cerrno>
 #include "ni_service_session.h"
+#include "process_exit_guard.h"
 
 #pragma comment(lib, "bcrypt.lib")
 #pragma comment(lib, "advapi32.lib")
@@ -165,6 +166,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
     runtimediag::event(file, "EXE", "INFO", "publisher_identity", "vdj_pid=%lu apply=%u bounded_ms=%lu", pid,
                        apply ? 1u : 0u, duration);
     HRESULT result = E_UNEXPECTED;
+    shutdownlimit::Guard exitGuard;
     try
     {
         // ZH: 只接受持有有效发布会话的 VDJ；命令行不能直接获得硬件写权限。
@@ -207,6 +209,8 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
                 MapViewOfFile(mapping.h, FILE_MAP_READ, 0, 0, sizeof(phase18::Frame)));
             if (!view.p)
                 return failure("publisher_mapping_view_failed", HRESULT_FROM_WIN32(GetLastError()));
+            if (!exitGuard.start(stop.h, parent.h, shutdownlimit::HelperMs))
+                return failure("exit_guard_start_failed", HRESULT_FROM_WIN32(GetLastError()));
             wchar_t parentPath[32768]{};
             DWORD count = 32768;
             if (!QueryFullProcessImageNameW(parent.h, 0, parentPath, &count))

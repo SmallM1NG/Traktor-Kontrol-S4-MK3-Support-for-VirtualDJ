@@ -6,7 +6,7 @@
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration"><ConfigurationType>Application</ConfigurationType><UseDebugLibraries>true</UseDebugLibraries><PlatformToolset Condition="'$(PlatformToolset)'=='' and '$(VisualStudioVersion)' &gt;= '18.0'">v145</PlatformToolset><PlatformToolset Condition="'$(PlatformToolset)'==''">v143</PlatformToolset><CharacterSet>Unicode</CharacterSet></PropertyGroup><PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration"><ConfigurationType>Application</ConfigurationType><UseDebugLibraries>false</UseDebugLibraries><PlatformToolset Condition="'$(PlatformToolset)'=='' and '$(VisualStudioVersion)' &gt;= '18.0'">v145</PlatformToolset><PlatformToolset Condition="'$(PlatformToolset)'==''">v143</PlatformToolset><CharacterSet>Unicode</CharacterSet></PropertyGroup>
  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
   <PropertyGroup>
-    <S4Version Condition="'$(S4Version)' == ''">v0.1.0</S4Version>
+    <S4Version Condition="'$(S4Version)' == ''">v0.1.1</S4Version>
     <OutDir>$(MSBuildThisFileDirectory)artifacts\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)obj\$(MSBuildProjectName)\</IntDir>
     <GeneratedDir>$(IntDir)generated\</GeneratedDir>
@@ -38,7 +38,7 @@
  <PropertyGroup><TargetName>Traktor Kontrol S4 MK3 NI Service Helper $(S4Version)</TargetName><S4IsBridge>false</S4IsBridge></PropertyGroup>
 
  <ItemGroup><ClCompile Include="Traktor Kontrol S4 MK3 NI Service Helper.cpp"/></ItemGroup>
- <ItemGroup><ClInclude Include="include\bridge_ipc.h"/><ClInclude Include="include\deck_sampler.h"/><ClInclude Include="include\haptic_cue.h"/><ClInclude Include="include\helper_launcher.h"/><ClInclude Include="include\jog_ring.h"/><ClInclude Include="include\ni_service_compatibility.h"/><ClInclude Include="include\ni_service_session.h"/><ClInclude Include="include\runtime_utils.h"/><ClInclude Include="include\screen_takeover.h"/><ClInclude Include="include\signatures\ni_service_signatures.h"/><ClInclude Include="include\signatures\vdj_signatures.h"/><ClInclude Include="include\startup_input.h"/><ClInclude Include="include\vdj_compatibility.h"/><ClInclude Include="vendor\vdjPlugin8.h"/><ClInclude Include="vendor\minhook\include\MinHook.h"/></ItemGroup>
+ <ItemGroup><ClInclude Include="include\bridge_ipc.h"/><ClInclude Include="include\deck_sampler.h"/><ClInclude Include="include\haptic_cue.h"/><ClInclude Include="include\helper_launcher.h"/><ClInclude Include="include\jog_ring.h"/><ClInclude Include="include\ni_service_compatibility.h"/><ClInclude Include="include\ni_cleanup_connection.h"/><ClInclude Include="include\ni_service_session.h"/><ClInclude Include="include\process_exit_guard.h"/><ClInclude Include="include\runtime_utils.h"/><ClInclude Include="include\screen_takeover.h"/><ClInclude Include="include\signatures\ni_service_signatures.h"/><ClInclude Include="include\signatures\vdj_signatures.h"/><ClInclude Include="include\signatures\vdj_8472_signatures.h"/><ClInclude Include="include\startup_input.h"/><ClInclude Include="include\vdj_compatibility.h"/><ClInclude Include="vendor\vdjPlugin8.h"/><ClInclude Include="vendor\minhook\include\MinHook.h"/></ItemGroup>
 
  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
   <UsingTask TaskName="S4GenerateIdentity" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">

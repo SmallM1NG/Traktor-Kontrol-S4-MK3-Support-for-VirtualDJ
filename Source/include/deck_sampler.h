@@ -38,7 +38,7 @@ inline bool deckNumber(double v)
     return std::isfinite(v) && v >= 1 && v <= 4 && std::floor(v) == v;
 }
 
-template <class Query, class Color> Sample read(bool right, Query query, Color color)
+template <class Query, class Color> Sample read(bool right, Query query, Color color, bool followReverse = false)
 {
     Sample out;
     double before = 0, after = 0;
@@ -77,6 +77,9 @@ template <class Query, class Color> Sample read(bool right, Query query, Color c
         if (get("get_pitch_value", tempo) && std::isfinite(tempo) && tempo > 0)
             out.tempo = tempo / 100.0;
     } // ZH: get_pitch_value 返回百分比，100 对应 1 倍速度。 | EN: get_pitch_value returns percent (100 = 1x).
+    double reverse = 0, dump = 0;
+    if (ok && loaded == 1 && tt == 1 && followReverse)
+        ok = get("reverse", reverse) && boolean(reverse) && get("dump", dump) && boolean(dump);
     ok = ok && query(alias, after) && after == before;
     if (ok)
     {
@@ -86,7 +89,8 @@ template <class Query, class Color> Sample read(bool right, Query query, Color c
         out.facts = (loaded == 1 ? phase18::Loaded : 0u) | (linein == 1 ? phase18::LineIn : 0u) |
                     (audible == 1 ? phase18::Audible : 0u) | (nearEnd == 1 ? phase18::NearEnd : 0u) |
                     (tt == 1 ? phase18::TT : 0u) | (playing == 1 ? phase18::Playing : 0u) |
-                    (touch == 1 ? phase18::Touched : 0u);
+                    (touch == 1 ? phase18::Touched : 0u) |
+                    (reverse == 1 || dump == 1 ? phase18::Reverse : 0u);
     }
     return out;
 }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 Created by DJM1NG (Based on the official files provided by VirtualDJ)
-Version: v0.1.0
+Version: v0.1.1
 https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ
 -->
-<device name="TRAKTORS4MK3" type="HID" macbyteoffset="0x01" description="Traktor Kontrol S4 MK3" decks="4" analogmixer="no" padColumns="4" padRows="2" padSides="2" vid="0x17CC" pid="0x1720" reportsize="78" outReportSize="94" author="DJM1NG" version="850" category="3" screentype="11" controllerSkin="Traktor Kontrol S4 MK3 Screen" date="2026-10-29">
+<device name="TRAKTORS4MK3" type="HID" macbyteoffset="0x01" description="Traktor Kontrol S4 MK3" decks="4" analogmixer="no" padColumns="4" padRows="2" padSides="2" vid="0x17CC" pid="0x1720" reportsize="78" outReportSize="94" author="DJM1NG" version="850" category="3" screentype="11" controllerSkin="Traktor Kontrol S4 MK3 Screen" date="2026-11-03">
   <audio description="Traktor Kontrol S4 MK3" input="4" output="2" mixer="yes" mic="no" linein="4" vid="0x17CC" pid="0x1720" identifier="#niks4mk3_audio#" asio="Traktor Kontrol S4 MK3" inputChannels="1,2,3,4,5,6,7,8" />
   <page type="init">
     <constant byte="-1" value="0x80" />
@@ -33,8 +33,8 @@ https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ
     <slider word="0x02" endian="little" min="0x00" max="0xFF0" name="VOLUME" deck="2" />
     <slider word="0x03" endian="little" min="0x00" max="0xFF0" name="VOLUME" deck="3" />
     <slider word="0x04" endian="little" min="0x00" max="0xFF0" name="VOLUME" deck="4" />
-    <slider word="0x05" endian="little" min="0x00" max="4080" name="PITCH" zero="2040" inverted="true" deck="right" zerorange="128" />
-    <slider word="0x06" endian="little" min="0x00" max="4080" name="PITCH" zero="2040" inverted="true" deck="left" zerorange="128" />
+    <slider word="0x05" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="128" name="PITCH" inverted="true" deck="right" />
+    <slider word="0x06" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="128" name="PITCH" inverted="true" deck="left" />
     <slider word="0x07" endian="little" min="0x00" max="0xFF0" name="GAIN" deck="3" />
     <slider word="0x08" endian="little" min="0x00" max="0xFF0" name="GAIN" deck="1" />
     <slider word="0x09" endian="little" min="0x00" max="0xFF0" name="GAIN" deck="2" />
@@ -42,31 +42,31 @@ https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ
     <slider word="0x0B" endian="little" min="0x00" max="0xFF0" name="MASTER_VOL" />
     <slider word="0x0C" endian="little" min="0x00" max="0xFF0" name="BOOTH_VOL" />
     <slider word="0x0D" endian="little" min="0x00" max="0xFF0" name="HEADPHONE_VOL" />
-    <slider word="0x0E" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="HEADPHONE_MIX" />
-    <slider word="0x0F" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM1" deck="left" />
-    <slider word="0x10" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM2" deck="left" />
-    <slider word="0x11" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM3" deck="left" />
-    <slider word="0x12" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM4" deck="left" />
-    <slider word="0x13" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_HIGH" deck="3" />
-    <slider word="0x14" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_MID" deck="3" />
-    <slider word="0x15" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_LOW" deck="3" />
-    <slider word="0x16" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_HIGH" deck="1" />
-    <slider word="0x17" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_MID" deck="1" />
-    <slider word="0x18" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_LOW" deck="1" />
-    <slider word="0x19" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_HIGH" deck="2" />
-    <slider word="0x1A" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_MID" deck="2" />
-    <slider word="0x1B" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_LOW" deck="2" />
-    <slider word="0x1C" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_HIGH" deck="4" />
-    <slider word="0x1D" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_MID" deck="4" />
-    <slider word="0x1E" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="EQ_LOW" deck="4" />
-    <slider word="0x1F" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FILTER" deck="3" />
-    <slider word="0x20" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FILTER" deck="1" />
-    <slider word="0x21" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FILTER" deck="2" />
-    <slider word="0x22" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FILTER" deck="4" />
-    <slider word="0x23" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM1" deck="right" />
-    <slider word="0x24" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM2" deck="right" />
-    <slider word="0x25" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM3" deck="right" />
-    <slider word="0x26" endian="little" min="0x00" max="0xFF0" zero="2040" zerorange="16" name="FX_PRM4" deck="right" />
+    <slider word="0x0E" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="HEADPHONE_MIX" />
+    <slider word="0x0F" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM1" deck="left" />
+    <slider word="0x10" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM2" deck="left" />
+    <slider word="0x11" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM3" deck="left" />
+    <slider word="0x12" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM4" deck="left" />
+    <slider word="0x13" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_HIGH" deck="3" />
+    <slider word="0x14" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_MID" deck="3" />
+    <slider word="0x15" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_LOW" deck="3" />
+    <slider word="0x16" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_HIGH" deck="1" />
+    <slider word="0x17" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_MID" deck="1" />
+    <slider word="0x18" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_LOW" deck="1" />
+    <slider word="0x19" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_HIGH" deck="2" />
+    <slider word="0x1A" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_MID" deck="2" />
+    <slider word="0x1B" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_LOW" deck="2" />
+    <slider word="0x1C" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_HIGH" deck="4" />
+    <slider word="0x1D" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_MID" deck="4" />
+    <slider word="0x1E" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="EQ_LOW" deck="4" />
+    <slider word="0x1F" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FILTER" deck="3" />
+    <slider word="0x20" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FILTER" deck="1" />
+    <slider word="0x21" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FILTER" deck="2" />
+    <slider word="0x22" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FILTER" deck="4" />
+    <slider word="0x23" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM1" deck="right" />
+    <slider word="0x24" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM2" deck="right" />
+    <slider word="0x25" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM3" deck="right" />
+    <slider word="0x26" endian="little" min="0x00" max="0xFF0" zero="0x7F8" zerorange="16" name="FX_PRM4" deck="right" />
   </page>
   <!-- MOTOR
 Already commented out in the original VirtualDJ definition. Retained for reference.
@@ -497,12 +497,13 @@ Already commented out in the original VirtualDJ definition. Retained for referen
     <buffer byte="0" nbbits="768" value="0x00" />
   </page>
   <settings>
-    <JogLEDMode values="Physical Jog,Absolute Position" default="Absolute Position" tooltip="Physical Jog: playback rotation follows TT speed/Tempo plus manual movement; touch or pause follows manual movement only. TT on follows the platter directly. Absolute Position (Experimental): follows VirtualDJ track rotation. Touch overrides end-of-track flashing." />
-    <TTTurntableSpeed values="33.3 RPM,45 RPM,BPM / 4 (Experimental)" default="33.3 RPM" tooltip="33.3/45 RPM follows deck Tempo. BPM / 4 (Experimental) uses the current BPM and is not long-term tested; use with caution. Maximum 75 RPM: exceeding it stops the motor; playback resumes rotation when back in range with TT on." />
+    <JogLEDRingMode values="Traktor Style,Pointer Position" default="Pointer Position" tooltip="Traktor Style: playback rotation uses TT Mode Base Speed and Tempo. Touch follows manual movement; release resumes automatic rotation. Automatic direction follows reverse/dump only with TT and TTModeReverse enabled. Pointer Position: follows the software track rotation. Touch overrides end-of-track flashing." />
+    <TTModeBaseSpeed values="33.3 RPM,45 RPM,BPM / 4" default="33.3 RPM" tooltip="33.3/45 RPM follows deck Tempo. BPM / 4 uses the current BPM and is experimental; it has not been tested long-term. Use with caution. Maximum 75 RPM: exceeding it stops the motor; playback resumes rotation when back in range with TT on." />
+    <TTModeReverse values="yes,no" default="no" tooltip="Experimental. yes: allow the motor and Traktor Style ring to follow reverse or dump playback while TT Mode is enabled. no: keep the forward target. Has no effect outside TT Mode." />
     <TicksWhenNudging values="None,Coarse,Fine" default="None" tooltip="JOG-mode rim haptic ticks during playback: None, Coarse or Fine. Applies to both jog wheels." />
     <JogwheelTension default="0" tooltip="Jog resistance for both sides: integer 0-255; 0 is lightest. Invalid values use 0." />
-    <HapticHotcues values="yes,no" default="yes" tooltip="Haptic feedback at the main Cue, Hotcues 1-8 and saved Loop 1-8 start/end points." />
-    <ScreenOutputTakeover values="ON,OFF" default="ON" name="Screen Output Takeover" tooltip="ON: background screen sending. OFF: native VirtualDJ sending. Applies immediately to both screens on supported hosts." />
+    <HapticHotcues values="yes,no" default="no" tooltip="Haptic feedback at the main Cue, Hotcues 1-8 and saved Loop 1-8 start/end points." />
+    <ScreenOutputTakeover values="yes,no" default="yes" tooltip="yes: background screen sending. no: native VirtualDJ sending. Applies immediately to both screens on supported hosts." />
   </settings>
 </device>
 
