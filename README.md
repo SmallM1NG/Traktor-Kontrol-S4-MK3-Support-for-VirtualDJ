@@ -16,7 +16,7 @@
 
 <p align="center"><a href="#project-introduction">Project Introduction</a> · <a href="#feature-showcase">Feature Showcase</a> · <a href="#how-to-install">How to Install</a> · <a href="#how-to-use">How to Use</a> · <a href="#additional-information">Additional Information</a></p>
 
-<p align="center"><a href="Docs/md/SUPPORTED_VERSIONS.md">Supported Versions</a> · <a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/CHANGELOG.md">Changelog</a></p>
+<p align="center"><a href="Docs/md/SUPPORTED_VERSIONS.md">Supported Versions</a> · <a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/CHANGELOG.md">Changelog</a> · <a href="Docs/PDF/TRAKTOR_KONTROL_S4_MK3_Manual_English_0719.pdf">Manual (PDF)</a></p>
 
 ---
 
@@ -364,7 +364,7 @@ The repository also provides [mapping files for this project](VirtualDJ/Mappers)
 <a id="additional-information"></a>
 ## Additional Information 📚
 
-<p align="center"><a href="Docs/md/SUPPORTED_VERSIONS.md">Supported Versions</a> · <a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/CHANGELOG.md">Changelog</a></p>
+<p align="center"><a href="Docs/md/SUPPORTED_VERSIONS.md">Supported Versions</a> · <a href="Docs/md/FAQ.md">FAQ</a> · <a href="Docs/md/DEVELOPMENT.md">Development</a> · <a href="Docs/md/CHANGELOG.md">Changelog</a> · <a href="Docs/PDF/TRAKTOR_KONTROL_S4_MK3_Manual_English_0719.pdf">Manual (PDF)</a></p>
 
 ### Additional Notes 💡
 
