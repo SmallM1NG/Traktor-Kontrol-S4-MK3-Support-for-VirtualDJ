@@ -26,9 +26,35 @@
 
 &emsp;**A:** DLL 位于 AutoStart，因此启动 VirtualDJ 时仍会加载，进行初始化、写入日志并等待设备连接；它并非完全不运行。未检测到有效的 S4 MK3 原生连接时，不会启动配套 EXE，也不会进入设备电机、灯环和触觉控制。
 
-**7.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">弹出功能不可用的报错框？</b>
+**7.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">弹出兼容性警告？</b>
 
-&emsp;**A:** 这表示对应功能所需的内部位置或设备对象未通过校验，相关自定义功能已被禁用。VirtualDJ 或 NIHardwareService 的版本变化可能导致这种情况，不代表所有功能都无法使用。请[提交 Issue](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/issues)。
+&emsp;**A:** 对应功能所需的内部位置或对象未通过校验，或挂接未能安全启用，相关功能会停用。VirtualDJ 或 NIHardwareService 的版本变化可能导致这种情况，并不代表全部功能都不可用。可按下图确认受影响的功能。
+
+**控制器连接定位失败**
+
+<img src="../images/faq/compat-controller-connection.png" width="600" alt="控制器连接定位失败警告">
+
+无法安全定位 VirtualDJ 的原生控制器连接，本项目的 TT 电机、灯环与触觉输出停用。VirtualDJ 原生控制及独立的输入、屏幕功能仍可使用。对应日志：`Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log`。
+
+**HID 输入定位或挂接失败**
+
+<img src="../images/faq/compat-hid-input.png" width="600" alt="HID 输入定位或挂接失败警告">
+
+无法安全定位或启用 HID 输入挂接，启动时的控件初始状态同步与实体 Jog 角度采样停用。Pointer Position 灯环模式及其他独立功能仍可使用。对应日志：`Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log`。
+
+**屏幕输出定位或挂接失败**
+
+<img src="../images/faq/compat-screen-output.png" width="600" alt="屏幕输出定位或挂接失败警告">
+
+无法安全定位或启用屏幕输出挂接，Screen Output Takeover 停用，继续使用 VirtualDJ 原生屏幕输出；其他控制器功能不受此报错影响。对应日志：`Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log`。
+
+**NIHardwareService 兼容性校验失败**
+
+<img src="../images/faq/compat-ni-service.png" width="600" alt="NIHardwareService 兼容性校验失败警告">
+
+NIHardwareService 的内部对象、函数或字段未通过兼容性校验，本项目的 TT 电机、灯环与触觉输出停用。VirtualDJ 原生控制、启动初始状态同步及屏幕输出仍可使用。对应日志：`Traktor-Kontrol-S4-MK3-NI-Service-Helper-v0.1.1.log`。
+
+日志位于 VirtualDJ 数据目录的 `Plugins64\AutoStart`。反馈时请附上报错截图及对应日志，并[提交 Issue](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/issues)。
 
 **8.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">配套 EXE 无法启动，而且没有出现 UAC 提示？</b>
 

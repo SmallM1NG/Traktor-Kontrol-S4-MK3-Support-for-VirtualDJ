@@ -26,9 +26,35 @@
 
 &emsp;**A:** The DLL is in AutoStart, so it still loads with VirtualDJ, initializes, writes logs and waits for a device connection; it is not completely inactive. Without a validated native S4 MK3 connection, it does not launch the paired EXE or enter motor, ring or haptic control.
 
-**7.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">Why does a “feature unavailable” dialog appear?</b>
+**7.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">Why does a compatibility warning appear?</b>
 
-&emsp;**A:** This means an internal location or device object required by the affected feature failed validation, so that custom feature has been disabled. Changes in VirtualDJ or NIHardwareService versions can cause this; it does not mean every feature is unavailable. Please [submit an Issue](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/issues).
+&emsp;**A:** An internal location or object required by a feature failed validation, or its hook could not be enabled safely, so the affected feature is disabled. Changes in VirtualDJ or NIHardwareService versions can cause this; it does not mean every feature is unavailable. Match the warning below to identify the affected features.
+
+**Controller connection could not be located**
+
+<img src="../images/faq/compat-controller-connection.png" width="600" alt="Controller connection compatibility warning">
+
+The DLL could not safely locate VirtualDJ's native controller connection. Custom TT motor, ring and haptic output are disabled. Native VirtualDJ controls and independent input and screen features remain available. Log: `Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log`.
+
+**HID input could not be located or hooked**
+
+<img src="../images/faq/compat-hid-input.png" width="600" alt="HID input compatibility warning">
+
+The HID input hook could not be located or enabled safely. Cold-start control-state synchronization and physical Jog angle sampling are disabled. Pointer Position ring mode and other independent features remain available. Log: `Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log`.
+
+**Screen output could not be located or hooked**
+
+<img src="../images/faq/compat-screen-output.png" width="600" alt="Screen output compatibility warning">
+
+The screen output hook could not be located or enabled safely. Screen Output Takeover is disabled, and native VirtualDJ screen output remains in use. Other controller features are unaffected by this warning. Log: `Traktor-Kontrol-S4-MK3-Bridge-v0.1.1.log`.
+
+**NIHardwareService compatibility validation failed**
+
+<img src="../images/faq/compat-ni-service.png" width="600" alt="NIHardwareService compatibility warning">
+
+NIHardwareService's internal objects, functions or fields failed compatibility validation. Custom TT motor, ring and haptic output are disabled. Native VirtualDJ controls, cold-start synchronization and screen output remain available. Log: `Traktor-Kontrol-S4-MK3-NI-Service-Helper-v0.1.1.log`.
+
+Logs are in `Plugins64\AutoStart` inside the VirtualDJ data folder. Please [submit an Issue](https://github.com/SmallM1NG/Traktor-Kontrol-S4-MK3-Support-for-VirtualDJ/issues) with the warning screenshot and the corresponding log.
 
 **8.** <b style="font-size: 1.15em">Q:</b> <b style="font-size: 1.15em">Why does the helper EXE fail to start without showing a UAC prompt?</b>
 
