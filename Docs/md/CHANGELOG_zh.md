@@ -2,6 +2,35 @@
 
 [English](CHANGELOG.md) · **中文**
 
+## v0.1.1
+
+### 🤨更新内容
+
+#### ✨ 新增
+
+- 新增实验性设置 **TTModeReverse**，启用时在 TT 开启的情况下，电机可跟随碟盘的反转 / Dump 状态进行反向旋转。
+- 新增 PAD 设置 **TITLE SCROLL ON/OFF**，控制页面 1–6 的超长标题滚动，有 Stems 标识时预留对应区域。
+- 新增 PAD 设置 **BROWSER 1/2 LINES**，切换自绘浏览器的单行 / 双行布局。
+- 新增 VirtualDJ 更多版本的兼容适配，保留经校验的地址定位与自动特征扫描。这些版本尚未经过完整测试，详见[支持版本文档](SUPPORTED_VERSIONS_zh.md)。
+
+#### ⚡ 优化
+
+- 优化屏幕输出接管模式下的处理逻辑，仅发送变化区域，使屏幕能以接近 60 的帧率显示。
+- 调整自绘浏览器的列宽、间距与对齐，避免 BPM 和歌曲时长被遮挡。
+- 优化退出清理逻辑，保存在线设备序列号，原连接断开时使用该序列号重连清理。
+- 调整 Traktor Style 灯环逻辑，播放时按所选基础转速及 Tempo 旋转，触摸时跟随手动位移，松手后恢复自动旋转。
+- 控制器设置更名为 JogLEDRingMode、TTModeBaseSpeed，灯环模式更名为 Traktor Style、Pointer Position。
+- 控制器布尔选项统一为 yes / no，实验性提示移至描述。
+- Settings PAD 子页顺序调整为 TT/COLOR → Screen Switch → Screen Style。
+- 调整部分设置的默认值。
+
+#### 🐛 修复
+
+- 修复页面 1–6 中已预处理 Stems 曲目的标识在负播放位置消失的问题。
+- 修复部分情况下退出 VirtualDJ 后，歌曲末尾警告闪烁仍持续（未成功清理状态）的问题。
+
+请完全清理旧版本的内容，重新安装最新版本，使用方法及仍存在的限制请查看 [README](../../README_zh.md)。
+
 ## v0.1.0
 
 - 首个公开版本。

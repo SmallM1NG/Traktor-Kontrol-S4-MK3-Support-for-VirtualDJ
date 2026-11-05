@@ -2,6 +2,35 @@
 
 **English** · [中文](CHANGELOG_zh.md)
 
+## v0.1.1
+
+### 🤨 What's Changed
+
+#### ✨ Added
+
+- Added the experimental **TTModeReverse** setting. When enabled with TT mode on, the motor can rotate in reverse to follow the Deck's reverse / Dump state.
+- Added the **TITLE SCROLL ON/OFF** PAD setting to control long-title scrolling on pages 1–6, reserving space when the Stems indicator is visible.
+- Added the **BROWSER 1/2 LINES** PAD setting to switch the custom browser between single-line and two-line layouts.
+- Added compatibility adaptation for more VirtualDJ versions, retaining validated address lookup and automatic feature scanning. These versions have not undergone full testing; see [Supported Versions](SUPPORTED_VERSIONS.md).
+
+#### ⚡ Improved
+
+- Optimized processing in screen output takeover mode to send only changed regions, allowing the screens to update at close to 60 frames per second.
+- Adjusted the custom browser's column widths, spacing and alignment to prevent BPM and track length from being clipped.
+- Improved exit cleanup by saving the online device serial number and using it to reconnect for cleanup if the original connection is lost.
+- Updated Traktor Style ring behavior: use the selected base speed and Tempo during playback, follow manual movement while touched, and resume automatic rotation after release.
+- Renamed controller settings to JogLEDRingMode and TTModeBaseSpeed, and ring modes to Traktor Style and Pointer Position.
+- Standardized boolean controller options as yes / no and moved experimental notices to descriptions.
+- Reordered Settings PAD pages to TT/COLOR → Screen Switch → Screen Style.
+- Adjusted the defaults for some settings.
+
+#### 🐛 Fixed
+
+- Fixed the precomputed Stems indicator disappearing at negative playback positions on pages 1–6.
+- Fixed cases where end-of-track warning flashing continued after VirtualDJ exited because its state was not successfully cleared.
+
+Completely remove the old version's files and reinstall the latest version. For usage instructions and remaining limitations, see the [README](../../README.md).
+
 ## v0.1.0
 
 - First public version.
